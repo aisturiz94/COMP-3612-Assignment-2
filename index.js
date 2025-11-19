@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
             setNavButtonListener(products);
     });
     }
-
+    initBrowse(products);
     //Adds an event listener to all the navigation buttons
     function setNavButtonListener(products){
         pageButtons.forEach(button => {
@@ -43,14 +43,132 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+//initializes all elements in the browse view so we can do stuff to it
+//input: array of prodcuts from the JSON
+function initBrowse(products) {
+    /* cache DOM elements */
+    const searchInput = document.querySelector("#product-search");
+    const sortSelect = document.querySelector("#sort-select");
+    const genderSelect = document.querySelector("#filter-gender");
+    const categorySelect = document.querySelector("#filter-category");
+    const clearBtn = document.querySelector("#clear-filters");
+    const grid = document.querySelector("#display-items-grid");
+
+    /* filter state */
+    let filters = {
+        search: "",
+        gender: "",
+        category: "",
+        sort: ""
+    };
+//Applies filters - issue rn is category breaks it
+    function applyFilters() {
+        let result = products.slice();
+
+        if (filters.gender) {
+            result = result.filter(p => p.gender === filters.gender + "s");
+        }
+
+        if (filters.category) {
+            result = result.filter(p => p.category === filters.category);
+        }
+
+        if (filters.search) {
+            const term = filters.search.toLowerCase();
+            result = result.filter(p => p.name.toLowerCase().includes(term));
+        }
+
+        if (filters.sort === "price-asc") {
+            result.sort((a, b) => a.price - b.price);
+        }
+        if (filters.sort === "price-desc") {
+            result.sort((a, b) => b.price - a.price);
+        }
+
+        renderBrowseGrid(result);
+    }
+
+    /* listeners */
+    searchInput.addEventListener("input", () => {
+        filters.search = searchInput.value.trim();
+        applyFilters();
+    });
+
+    genderSelect.addEventListener("change", () => {
+        filters.gender = genderSelect.value; 
+        applyFilters();
+    });
+
+    categorySelect.addEventListener("change", () => {
+        filters.category = categorySelect.value;
+        applyFilters();
+    });
+
+    sortSelect.addEventListener("change", () => {
+        filters.sort = sortSelect.value;
+        applyFilters();
+    });
+
+    clearBtn.addEventListener("click", () => {
+        filters = { search: "", gender: "", category: "", sort: "" };
+
+        searchInput.value = "";
+        genderSelect.value = "";
+        categorySelect.value = "";
+        sortSelect.value = "";
+
+        applyFilters();
+    });
+
+    /* first render */
+    applyFilters();
+
+    /* event delegation for buttons inside product cards */
+    grid.addEventListener("click", e => {
+        const card = e.target.closest(".product-card");
+        if (!card) return;
+
+        const id = card.dataset.id;
+        const product = products.find(p => String(p.id) === id);
+
+        if (e.target.classList.contains("btn-details")) {
+            changePage("product");
+            /*fill product view here later */
+        }
+
+        if (e.target.classList.contains("btn-add")) {
+            /*connect addToCart here later */
+        }
+    });
+}
 
 
+//Renders the grid for the browse view
+function renderBrowseGrid(list) {
+    const grid = document.querySelector("#display-items-grid");
+    const template = document.querySelector("#product-card-template");
 
+    /* remove old product cards */
+    grid.querySelectorAll(".product-card").forEach(c => c.remove());
 
-//NOT REMOTHLY FINISHFED
-    // function renderBrowseGrid(grid,items) {
-    //     const gridTemplate = document.querySelector("product-card-template");
-    // }
+    list.forEach(product => {
+        const clone = template.content.cloneNode(true);
+
+        const card = clone.querySelector(".product-card");
+        const img = clone.querySelector(".product-image");
+        const title = clone.querySelector(".product-title");
+        const price = clone.querySelector(".product-price");
+
+        card.dataset.id = product.id;
+        img.src = "https://placehold.co/600x400/png?text=Placeholder";
+        img.alt = product.name;
+        title.textContent = product.name;
+        price.textContent = `$${product.price.toFixed(2)}`;
+
+        grid.appendChild(clone);
+    });
+}
+
 
     // Verifies if a page button was clicked
     function pageButtonClicked(buttonId) {
