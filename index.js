@@ -38,6 +38,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+
+
+
+
+
+
+
+
+
+
     // Verifies if a page button was clicked
     function pageButtonClicked(buttonId) {
         const navIds = ["home", "women", "men", "browse", "about"];
@@ -52,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Changes the web page being displayed by hiding
     // all of them and setting the selected page visible.
     function changePage(viewId, products) {
-            const views = ["home-view", "women-view", "men-view" ,"browse-view", "product-view", "cart-view"];
+            const views = ["home-view", "women-view", "men-view" ,"browse-view", "product-view", "cart-view","about-view"];
 
             if (viewId == "women" || viewId == "men"){
                 loadGenderProducts(viewId, products);
@@ -75,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // ARE WE GOING TO ADD IMAGES OR NAH?
                     let img = document.createElement("img");
-                    img.src = "";
+                    img.src = "https://placehold.co/600x400/png?text=Place+Holder";
                     img.alt = product.name;
 
                     let figcaption = document.createElement("figcaption");
