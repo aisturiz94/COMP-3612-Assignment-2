@@ -1,92 +1,299 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-   <meta charset="utf-8"/>  
-    <title>A2</title>   
+    <meta charset="utf-8" />
+    <title>A2</title>
     <script src="index.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
 
 <body>
+    <div id="home-view" class="">
+        <header class="page-head">
+            <div id="logo" class=""> FANCY NAME </div>
 
-    <header class="page-head">
-        <div id="logo" class=""> FANCY NAME </div>
+            <nav>
+                <button id="home"> Home </button>
+                <button id="women"> Women </button>
+                <button id="men"> Men </button>
+                <button id="browse"> Browse </button>
+                <button id="about"> About </button>
+            </nav>
 
-        <nav>
-            <button id="home"> Home </button>
-            <button id="women"> Women </button>
-            <button id="men"> Men </button>
-            <button id="browse"> Browse </button>
-            <button id="about"> About </button>
+            <div id="cart" class="">
+                <p> CART </p>
+                <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
+                    0
+                </span>
+            </div>
+        </header>
+
+        <section id="home-content" class="">
+
+            <div id="home-hero-image" class=""> HERO IMAGE HERE </div>
+
+            <section id="featured-products">
+                <p> Should this be populated in JS? </p>
+            </section>
+
+        </section>
+
+        <footer class="mt-12 p-6 text-center text-gray-600 border-t">
+            <p>© 2025 FANCY STORE NAME</p>
+            <a href="github link" class="text-blue-600 underline"> GitHub Repository </a>
+        </footer>
+    </div>
+
+    <div id="women-view" class="hidden">
+        <header class="page-head">
+            <div id="logo" class=""> FANCY NAME </div>
+
+            <nav>
+                <button id="home"> Home </button>
+                <button id="women"> Women </button>
+                <button id="men"> Men </button>
+                <button id="browse"> Browse </button>
+                <button id="about"> About </button>
+            </nav>
+
+            <div id="cart" class="">
+                <p> CART </p>
+                <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
+                    0
+                </span>
+            </div>
+        </header>
+
+        <section id="women-content" class="">
+
+            <div id="women-hero-image" class="">
+                HERO IMAGE HERE
+                <p> WOMEN </p>
+            </div>
+
+            <section id="women-products">
+                <p> Should this be populated in JS? </p>
+            </section>
+
+        </section>
+
+        <footer class="mt-12 p-6 text-center text-gray-600 border-t">
+            <p>© 2025 FANCY STORE NAME</p>
+            <a href="github link" class="text-blue-600 underline"> GitHub Repository </a>
+        </footer>
+    </div>
+
+    <div id="men-view" class="hidden">
+        <header class="page-head">
+            <div id="logo" class=""> FANCY NAME </div>
+
+            <nav>
+                <button id="home"> Home </button>
+                <button id="women"> Women </button>
+                <button id="men"> Men </button>
+                <button id="browse"> Browse </button>
+                <button id="about"> About </button>
+            </nav>
+
+            <div id="cart" class="">
+                <p> CART </p>
+                <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
+                    0
+                </span>
+            </div>
+        </header>
+
+        <section id="men-content" class="">
+
+            <div id="men-hero-image" class="">
+                HERO IMAGE HERE
+                <p> MEN </p>
+            </div>
+
+            <section id="men-products">
+                <p> Should this be populated in JS? </p>
+            </section>
+
+        </section>
+
+        <footer class="mt-12 p-6 text-center text-gray-600 border-t">
+            <p>© 2025 FANCY STORE NAME</p>
+            <a href="github link" class="text-blue-600 underline"> GitHub Repository </a>
+        </footer>
+    </div>
+
+    <div id="browse-view" class="">
+        <h1>Browse Products</h1>
+        <div class="search-bar">
+            <label for="product-search">Search</label>
+            <input type="text" id="product-search" placeholder="Product Name">
+            <button id="clear-filters">Clear All</button>
+        </div>
+
+
+        <div class="filters">
+            <label for="sort-select">Sort by</label>
+            <select id="sort-select">
+                <option value="">Select</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+            </select>
+        </div>
+
+        <div id="pick-gender">
+            <label for="filter-gender">Gender</label>
+            <select id="filter-gender">
+                <option value="">All</option>
+                <option value="women">Women</option>
+                <option value="men">Men</option>
+            </select>
+        </div>
+
+        <div id="pick-clothes">
+            <label for="filter-category">Category</label>
+            <select id="filter-category">
+                <option value="">All</option>
+                <option value="bottoms">Bottoms</option>
+                <option value="tops">Tops</option>
+                <option value="sweaters">Sweaters</option>
+                <option value="dresses">Dresses</option>
+                <option value="outerwear">Outerwear</option>
+                <option value="accessories">Accessories</option>
+                <option value="shoes">Shoes</option>
+                <option value="loungewear">Loungewear</option>
+            </select>
+        </div>
+
+        <div id="display-items-grid">
+            <!--Will be populated using JS. Below is example struct-->
+            <template>
+                <div class="product-card" data-id="product-id">
+                    <img src="#" alt="PRODUCT_NAME" class="product-image" data-id="product-id" />
+                    <h3 class="product-title" data-id="product-id">PRODUCT NAME</h3>
+                    <p class="product-price">$PRICE</p>
+                    <button id="add-to-cart">Add to Cart</button>
+                    <button id="more-details">More Details</button>
+                </div>
+            </template>
+        </div>
+
+
+    </div>
+
+
+
+
+    <div id="product-view" class="">
+        <nav id="product-breadcrumb">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#" id="breadcrumb-gender">Gender</a></li>
+                <li><a href="#" id="breadcrumb-category">Category</a></li>
+                <li><span id="breadcrumb-product">Product Name</span></li>
+            </ul>
         </nav>
+        <article id="product-detail">
+            <div id="product-media">
+                <img id="product-image" src="#" alt="#" />
+            </div>
+            <div id="product-info">
+                <h1 id="product-title">Product Title</h1>
+                <p id="product-price">$</p>
+                <p id="product-material">MATERIAL</p>
+                <p id="product-description">Product description goes here</p>
+                <p id="product-colour">COLOUR</p>
 
-        <div id="cart" class="">
-            <p> CART </p>
-            <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
-            0
-            </span>
-        </div>
-    </header>
+                <div id="product-sizes">
+                    <h2>Sizes:</h2>
+                    <div id="size-options">
+                        <!--Insert sizes with JS, example struct below-->
+                        <template>
+                            <div class="size-display-box">
+                                <div id="small">S</div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
 
-  <div id="home-view" class="">
+                <!-- Quantity + Add to Cart -->
+                <section id="product-purchase">
+                    <label for="quantity-input">Quantity</label>
+                    <input id="quantity-input" type="number" min="1" value="1" />
 
-    <section id="home-content" class="">
-
-        <div id="home-hero-image" class=""> HERO IMAGE HERE </div>
-
-        <section id="featured-products">
-            <p> Should this be populated in JS? </p>
+                    <button id="add-to-cart">Add to Cart</button>
+                </section>
+            </div>
+        </article>
+        <section id="related-products">
+            <h2>Related Products</h2>
+            <div id="related-grid">
+                <!-- JS will insert related product cards here, use template from div class="product-card"-->
+            </div>
         </section>
+    </div>
 
-    </section>
 
-  </div>
 
-  <div id="women-view" class="hidden">
 
-    <section id="women-content" class="">
+        <div id="cart-view" class="">
+            <h1>Shopping Cart</h1>
+            <!-- Template for one cart item -->
+            <template id="cart-item">
+                <div class="cart-item" data-id="" data-size="">
+                    <span class="cart-item-name"></span>
+                    <span class="cart-item-options"></span> <!-- e.g. "Size: M" -->
+                    <span class="cart-item-quantity"></span>
+                    <span class="cart-item-price"></span>
+                    <button class="cart-item-remove">Remove</button>
+                </div>
+            </template>
+            <div id="cart-items">
+                <!-- List of "cart-item" generated by JS- -->
+            </div>
+            <p id="cart-empty-message" class="hidden">
+                Your cart is empty.
+            </p>
+            <div id="cart-shipping">
+                <h2>Shipping</h2>
 
-        <div id="women-hero-image" class=""> 
-            HERO IMAGE HERE 
-            <p> WOMEN </p>
+                <div class="shipping-methods">
+                    <fieldset>
+                        <legend>Shipping Method</legend>
+                        <label>
+                            <input type="radio" id="shipping-method" value="standard" checked/>Standard</label>
+
+                        <label>
+                            <input type="radio" id="shipping-method" value="express"/>Express</label>
+
+                        <label>
+                            <input type="radio" id="shipping-method" value="priority"/>Priority</label>
+                    </fieldset>
+                </div>
+                <div class="shipping-destination">
+                    <fieldset>
+                        <legend>Destination</legend>
+                        <label for="destination-select">Destination</label>
+                        <select id="destination-select">
+                            <option value="canada">Canada</option>
+                            <option value="usa">United States</option>
+                            <option value="international">International</option>
+                        </select>
+                    </fieldset>
+                </div>
+            </div>
+            <div id="cart-summary">
+                <h2>Order Summary</h2>
+                <p id="cart-subtotal">Subtotal: $JS</p>
+                <p id="cart-shipping-cost">Shipping: $JS</p>
+                <p id="cart-total">Total: $JS</p>
+            </div>
+            <div id="cart-actions">
+                <button id="cart-clear">Clear Cart</button>
+                <button id="cart-checkout">Checkout</button>
+            </div>
         </div>
-
-        <section id="women-products">
-            <p> Should this be populated in JS? </p>
-        </section>
-
-    </section>
-
-  </div>
-
-  <div id="men-view" class="hidden">
-
-    <section id="men-content" class="">
-
-        <div id="men-hero-image" class=""> 
-            HERO IMAGE HERE 
-            <p> MEN </p>
-        </div>
-
-        <section id="men-products">
-            <p> Should this be populated in JS? </p>
-        </section>
-
-    </section>
-
-  </div>
-
-  <div id="browse-view" class="hidden"> temp </div>
-
-  <div id="product-view" class="hidden"> temp </div>
-
-  <div id="cart-view" class="hidden"> temp </div>
-
-  <footer class="mt-12 p-6 text-center text-gray-600 border-t">
-        <p>© 2025 FANCY STORE NAME</p>
-        <a href="github link" class="text-blue-600 underline"> GitHub Repository </a>
-  </footer>
 </body>
 
 
