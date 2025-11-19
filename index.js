@@ -47,6 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+//NOT REMOTHLY FINISHFED
+    // function renderBrowseGrid(grid,items) {
+    //     const gridTemplate = document.querySelector("product-card-template");
+    // }
 
     // Verifies if a page button was clicked
     function pageButtonClicked(buttonId) {
