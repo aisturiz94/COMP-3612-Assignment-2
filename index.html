@@ -89,6 +89,7 @@
             <label for="sort-select">Sort by</label>
             <select id="sort-select">
                 <option value="">Select</option>
+                <option value="name-asc">Name: A-Z</option>
                 <option value="price-asc">Price: Low to High</option>
                 <option value="price-desc">Price: High to Low</option>
             </select>
@@ -125,8 +126,8 @@
                     <img src="#" alt="PRODUCT_NAME" class="product-image" data-id="product-id" />
                     <h3 class="product-title" data-id="product-id">PRODUCT NAME</h3>
                     <p class="product-price">$PRICE</p>
-                    <button id="add-to-cart">Add to Cart</button>
-                    <button id="more-details">More Details</button>
+                    <button class="add-to-cart">Add to Cart</button>
+                    <button class="btn-details">More Details</button>
                 </div>
             </template>
         </div>
@@ -148,7 +149,7 @@
         </nav>
         <article id="product-detail">
             <div id="product-media">
-                <img id="product-image" src="#" alt="#" />
+                <img id="product-image" src="https://placehold.co/600x400/png?text=Placeholder" alt="#" />
             </div>
             <div id="product-info">
                 <h1 id="product-title">Product Title</h1>
