@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const url =  "https://gist.githubusercontent.com/rconnolly/d37a491b50203d66d043c26f33dbd798/raw/37b5b68c527ddbe824eaed12073d266d5455432a/clothing-compact.json";
 
-    let pageButtons = document.querySelectorAll("nav button");
+    let navButtons = document.querySelectorAll("nav button");
     let products = [];
 
     
@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     //Adds an event listener to all the navigation buttons
     function setNavButtonListener(products){
-        pageButtons.forEach(button => {
+        navButtons.forEach(button => {
             button.addEventListener("click", (e) => {
                 if (pageButtonClicked(e.target.id)) {
                     changePage(e.target.id, products);
@@ -37,6 +37,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    //Activates a page's buttons event listener
+    function activateButtonListener(viewId) {
+        let pageButtons = document.querySelectorAll(`#${viewId}-view button`);
+        pageButtons.forEach(button => {
+            button.disabled = false;
+        })
+    }
+
+    //Disables a page's buttons event listener
+    function disableButtonListener(viewId) {
+        let pageButtons = document.querySelectorAll(`#${viewId}-view button`);
+        pageButtons.forEach(button => {
+            button.disabled = true;
+        })
+    }
 
     // Verifies if a page button was clicked
     function pageButtonClicked(buttonId) {
@@ -59,9 +74,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             views.forEach(view => {
                 document.getElementById(view).classList.add("hidden");
+                disableButtonListener(viewId);
             });
 
             document.getElementById(`${viewId}-view`).classList.remove("hidden");
+            activateButtonListener(viewId);
     }
 
     // The function creates filtered products based on the gender that was chosen
@@ -108,3 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 });
+
+// Need to create the JS for the add to cart button
+// Need to create the display for when cart view is selected
