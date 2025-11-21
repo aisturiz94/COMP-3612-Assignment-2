@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <header class="page-head">
+    <header class="page-head flex justify-between items-center px-6 py-4">
             <div id="logo" class=""> FANCY NAME </div>
 
             <nav>
@@ -19,11 +19,12 @@
                 <button id="men"> Men </button>
                 <button id="browse"> Browse </button>
                 <button id="about"> About </button>
+                <button id="cart"> TEMP CART BUTTON </button>
             </nav>
 
-            <div id="cart" class="">
+            <div id="cart" class="relative cursor-pointer flex items-center gap-1">
                 <p> CART </p>
-                <span id="cartCount" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
                     0
                 </span>
             </div>

@@ -2,8 +2,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const url =  "https://gist.githubusercontent.com/rconnolly/d37a491b50203d66d043c26f33dbd798/raw/37b5b68c527ddbe824eaed12073d266d5455432a/clothing-compact.json";
 
+
+    function Cart(id, name, option, price, quantity) {
+        this.id = id;
+        this.name = name;
+        this.option = option;
+        this.price = price;
+        this.quantity = quantity;
+    }
     let navButtons = document.querySelectorAll("nav button");
     let products = [];
+    let cartItems = [];
 
     
     const savedData = localStorage.getItem("products");
@@ -26,16 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     }
     initBrowse(products);
-    //Adds an event listener to all the navigation buttons
-    function setNavButtonListener(products){
-        navButtons.forEach(button => {
-            button.addEventListener("click", (e) => {
-                if (pageButtonClicked(e.target.id)) {
-                    changePage(e.target.id, products);
-                }
-            });
-        });
-    }
 
     //event delegation for "More Details" & "Add to Cart(not done yet" 
     document.addEventListener("click", e => {
@@ -60,13 +59,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (isAdd) {
-            // TODO: addToCart(product);
+            addToCart(product, cart);
         }
     });
 
 
 
-
+    
+    //Adds an event listener to all the navigation buttons
+    function setNavButtonListener(products){
+        navButtons.forEach(button => {
+            button.addEventListener("click", (e) => {
+                if (pageButtonClicked(e.target.id)) {
+                    changePage(e.target.id, products);
+                }
+            });
+        });
+    }
 
 //initializes all elements in the browse view so we can do stuff to it
 //input: array of prodcuts from the JSON
@@ -368,6 +377,42 @@ function renderBrowseGrid(list) {
         }
     });
 }
+
+    function addToCart(product, cart){
+
+      const id = product.id;
+      const name = product.name;
+      const price = product.price;
+      const option = product.option;
+      
+      let existingItem = cart.find(item => item.id == id);
+
+      if (existingItem) {
+         existingItem.quantity++;
+      } else {
+         cartItems.push(new Cart(id, name, option, price, 1));
+      }
+
+      updateCart();
+      updateCartNum();
+   }
+
+    function updateCart(){
+         const currentCart = document.querySelector("#cart-items");
+         currentCart.innerHTML = "";
+
+
+      }
+
+      function updateCartNum() {
+        let totalQty = 0;
+
+        for (let item of cart) {
+               totalQty += item.quantity;
+        }
+
+        document.querySelector("#cart-count").textContent = totalQty;
+    }
 
 
 });
