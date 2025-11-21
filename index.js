@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     }
     initBrowse(products);
+    loadHomeProducts(products);
     //Adds an event listener to all the navigation buttons
     function setNavButtonListener(products){
         navButtons.forEach(button => {
@@ -67,7 +68,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+function loadHomeProducts(products) {
+        const homeSection = document.querySelector("#featured-products");
+        const gridContainer = document.createElement("div");
+        
+        gridContainer.id = "home-grid";
+        gridContainer.className = "grid grid-cols-1 md:grid-cols-4 gap-4"; 
+        const template = document.querySelector("#product-card-template");
 
+        //Pick 4 random products
+        const shuffled = products.sort(() => 0.5 - Math.random());
+        const featured = shuffled.slice(0, 4);
+
+        // Loop and Append
+        featured.forEach(product => {
+            // Clone the template content
+            const clone = template.content.cloneNode(true);
+            // Populate Data
+            const card = clone.querySelector(".product-card");
+            const img = clone.querySelector(".product-image");
+            const title = clone.querySelector(".product-title");
+            const price = clone.querySelector(".product-price");
+            
+            card.dataset.id = product.id;
+
+            // Set Content
+            img.src = "https://placehold.co/600x400/png?text=Place+Holder";
+            img.alt = product.name;
+            title.textContent = product.name;
+            price.textContent = `$${product.price.toFixed(2)}`;
+
+            // Append the populated clone to the grid container
+            gridContainer.appendChild(clone);
+        });
+
+        // 7. Finally, add the grid to the page
+        homeSection.appendChild(gridContainer);
+    }
 //initializes all elements in the browse view so we can do stuff to it
 //input: array of prodcuts from the JSON
 function initBrowse(products) {
@@ -152,8 +189,6 @@ function initBrowse(products) {
         applyFilters();
     });
     applyFilters();
-
-///////////////////////////
 }
 
 
@@ -174,7 +209,7 @@ function renderBrowseGrid(list) {
         const price = clone.querySelector(".product-price");
 
         card.dataset.id = product.id;
-        img.src = "https://placehold.co/600x400/png?text=Placeholder";
+        img.src = "https://placehold.co/600x400/png?text=Place+holder";
         img.alt = product.name;
         title.textContent = product.name;
         price.textContent = `$${product.price.toFixed(2)}`;
@@ -312,7 +347,7 @@ function renderBrowseGrid(list) {
             const price = clone.querySelector(".product-price");
 
             card.dataset.id = item.id;
-            img.src = "https://placehold.co/600x400/png?text=Placeholder";
+            img.src = "https://placehold.co/600x400/png?text=Place+Holder";
             img.alt = item.name;
             title.textContent = item.name;
             price.textContent = `$${item.price.toFixed(2)}`;
@@ -323,50 +358,45 @@ function renderBrowseGrid(list) {
 
 
     // The function creates filtered products based on the gender that was chosen
-    function loadGenderProducts (genderView, products) {
-    let productSection = document.querySelector(`#${genderView}-products`);
-    productSection.innerHTML = '';
-
-    products.forEach(product => {
-        if (product.gender == `${genderView}s`) {
-            let figure = document.createElement("figure");
-            /* make gender items behave like product cards */
-            figure.classList.add("product-card");
-            figure.dataset.id = product.id;
-
-            let img = document.createElement("img");
-            img.src = "https://placehold.co/600x400/png?text=Place+Holder";
-            img.alt = product.name;
-
-            let figcaption = document.createElement("figcaption");
-
-            let productName = document.createElement("p");
-            productName.textContent = product.name;
-
-            let productPrice = document.createElement("p");
-            productPrice.textContent = `$${product.price.toFixed(2)}`;
-
-            let addBtn = document.createElement("button");
-            addBtn.textContent = "Add";
-            addBtn.dataset.productId = product.id;
-            addBtn.classList.add("btn-add");
-
-            let detailBtn = document.createElement("button");
-            detailBtn.textContent = "More Details";
-            detailBtn.dataset.productId = product.id;
-            detailBtn.classList.add("btn-details");
-
-            figcaption.appendChild(productName);
-            figcaption.appendChild(productPrice);
-            figcaption.appendChild(addBtn);
-            figcaption.appendChild(detailBtn);
-
-            figure.appendChild(img);
-            figure.appendChild(figcaption);
-
-            productSection.appendChild(figure);
-        }
+   function loadGenderProducts(genderView, products) {
+    const container = document.querySelector(`#${genderView}-products`);
+    const template = document.querySelector("#product-card-template");
+    
+    container.innerHTML = '<div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"></div>';
+    const grid = container.querySelector('div');
+    const filtered = products.filter(p => p.gender === `${genderView}s`);
+    filtered.forEach(product => {
+        const clone = template.content.cloneNode(true);
+        populateCard(clone, product);
+        grid.appendChild(clone);
     });
+}
+//Creates a card to be displayed with the product info
+function populateCard(clone, product) {
+    const card = clone.querySelector(".product-card");
+    const img = clone.querySelector(".product-image");
+    const title = clone.querySelector(".product-title");
+    const price = clone.querySelector(".product-price");
+    const addBtn = clone.querySelector(".btn-add");
+    const detailBtn = clone.querySelector(".btn-details");
+    
+    // NEW: Select the color elements
+    const colorDot = clone.querySelector(".product-color-dot");
+    const colorName = clone.querySelector(".product-color-name");
+
+    // Set IDs
+    card.dataset.id = product.id;
+    addBtn.dataset.productId = product.id;
+    // Also set ID on details button for your listener
+    if (detailBtn){
+        detailBtn.dataset.productId = product.id; 
+    }
+
+    // Set Content
+    img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=PLace+Holder`;
+    img.alt = product.name;
+    title.textContent = product.name;
+    price.textContent = `$${product.price.toFixed(2)}`;
 }
 
 
