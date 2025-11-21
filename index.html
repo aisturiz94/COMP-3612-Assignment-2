@@ -10,19 +10,18 @@
 </head>
 
 <body>
-    <header class="page-head flex justify-between items-center px-6 py-4">
-            <div id="logo" class=""> FANCY NAME </div>
+    <header class="flex justify-between items-center bg-white text-black border-b border-gray-200 p-4">
+            <div id="logo" class="text-2xl font-black tracking-tighter p-2 cursor-pointer"> FANCY NAME </div>
 
-            <nav>
-                <button id="home"> Home </button>
-                <button id="women"> Women </button>
-                <button id="men"> Men </button>
-                <button id="browse"> Browse </button>
-                <button id="about"> About </button>
-                <button id="cart"> TEMP CART BUTTON </button>
+            <nav class="flex items-center space-x-1">
+                <button id="home" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Home </button>
+                <button id="women" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Women </button>
+                <button id="men" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Men </button>
+                <button id="browse" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Browse </button>
+                <button id="about" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> About </button>
             </nav>
 
-            <div id="cart" class="relative cursor-pointer flex items-center gap-1">
+            <div id="cart" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
                 <p> CART </p>
                 <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
                     0
@@ -34,10 +33,11 @@
 
         <section id="home-content" class="">
 
-            <div id="home-hero-image" class=""> HERO IMAGE HERE </div>
+            <div id="home-hero-image" class=""> 
+                <img src="Gemini_Generated_Image_wg1o93wg1o93wg1o.png">
+            </div>
 
             <section id="featured-products">
-                <p> Should this be populated in JS? </p>
             </section>
 
         </section>
@@ -123,12 +123,31 @@
         <div id="display-items-grid">
             <!--Will be populated using JS. Below is example struct-->
             <template id="product-card-template">
-                <div class="product-card" data-id="product-id">
-                    <img src="#" alt="PRODUCT_NAME" class="product-image" data-id="product-id" />
-                    <h3 class="product-title" data-id="product-id">PRODUCT NAME</h3>
-                    <p class="product-price">$PRICE</p>
-                    <button class="add-to-cart">Add to Cart</button>
-                    <button class="btn-details">More Details</button>
+                <!-- Main Card Container -->
+                <div class="product-card group flex flex-col gap-3 cursor-pointer" data-id="">
+                    <div class="relative w-full overflow-hidden">
+                        <img src="#" alt="Product" class="product-image w-full h-full object-center" />
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div id="title-price" class="flex justify-between items-start">
+                            <h3 class="product-title text-sm text-gray-800 font-normal w-full truncate"></h3>
+                            <div class="text-right">
+                                <span class="product-price text-sm font-bold text-gray-900 block"></span>
+                            </div>
+                        </div>
+                        <div id ="color-circle" class="flex items-center gap-2 mt-1">
+                            <div class="product-color-dot w-4 h-4 rounded-full border border-gray-300" style="background-color: #333;"></div>
+                            <span class="text-xs text-gray-500 product-color-name"></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-3">
+                            <button class="btn-add bg-black text-white text-xs font-medium p-2 uppercase hover:bg-gray-800 transition-colors">
+                                Add to Cart
+                            </button>
+                            <button class="btn-details border border-black text-black text-xs font-medium py-2 uppercase tracking-wider hover:bg-gray-50 transition-colors">
+                                Details
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </template>
         </div>
