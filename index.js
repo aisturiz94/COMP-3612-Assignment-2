@@ -35,8 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     }
     initBrowse(products);
-<<<<<<< HEAD
-=======
     loadHomeProducts(products);
     //Adds an event listener to all the navigation buttons
     function setNavButtonListener(products){
@@ -48,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
->>>>>>> f05c2cc2b6e781ccfc36184e19263c209a6f4139
 
     //event delegation for "More Details" & "Add to Cart(not done yet" 
     document.addEventListener("click", e => {
@@ -79,19 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-<<<<<<< HEAD
-    
-    //Adds an event listener to all the navigation buttons
-    function setNavButtonListener(products){
-        navButtons.forEach(button => {
-            button.addEventListener("click", (e) => {
-                if (pageButtonClicked(e.target.id)) {
-                    changePage(e.target.id, products);
-                }
-            });
-        });
-    }
-=======
 
 function loadHomeProducts(products) {
         const homeSection = document.querySelector("#featured-products");
@@ -100,7 +84,6 @@ function loadHomeProducts(products) {
         gridContainer.id = "home-grid";
         gridContainer.className = "grid grid-cols-1 md:grid-cols-4 gap-4"; 
         const template = document.querySelector("#product-card-template");
->>>>>>> f05c2cc2b6e781ccfc36184e19263c209a6f4139
 
         //Pick 4 random products
         const shuffled = products.sort(() => 0.5 - Math.random());
