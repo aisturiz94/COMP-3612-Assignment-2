@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         this.quantity = quantity;
     }
     let navButtons = document.querySelectorAll("nav button");
+    let cartButton = document.querySelector('#cart');
     let products = [];
     let cartItems = [];
 
@@ -45,6 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
+        cartButton.addEventListener("click", () => {
+                changePage("cart", products);
+        });
     }
 
     //event delegation for "More Details" & "Add to Cart(not done yet" 
@@ -70,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (isAdd) {
-            addToCart(product, cart);
+            addToCart(product, cartItems);
         }
     });
 
@@ -408,14 +412,15 @@ function populateCard(clone, product) {
     price.textContent = `$${product.price.toFixed(2)}`;
 }
 
-    function addToCart(product, cart){
+    function addToCart(product, cartItems){
 
       const id = product.id;
       const name = product.name;
       const price = product.price;
-      const option = product.option;
+      //Need to Work on the Logic to select the Size chosenn by a user
+      const option = `S`;
       
-      let existingItem = cart.find(item => item.id == id);
+      let existingItem = cartItems.find(item => item.id == id);
 
       if (existingItem) {
          existingItem.quantity++;
@@ -424,28 +429,59 @@ function populateCard(clone, product) {
       }
 
       updateCart();
-      updateCartNum();
+      updateCartIconNum();
    }
 
-    function updateCart(){
-         const currentCart = document.querySelector("#cart-items");
-         currentCart.innerHTML = "";
+    // Updates the cart view items, when an item is added
+    function updateCart() {
+        const currentCart = document.querySelector("#cart-items");
+        const template = document.querySelector("#cart-item");
 
+        currentCart.innerHTML = "";
 
-      }
+        cartItems.forEach(item => {
+            const clone = template.content.cloneNode(true);
 
-      function updateCartNum() {
+            const itemDiv = clone.querySelector(".cart-item");
+            const itemName = clone.querySelector(".cart-item-name");
+            const itemOptions = clone.querySelector(".cart-item-options");
+            const itemQuantity = clone.querySelector(".cart-item-quantity");
+            const itemPrice = clone.querySelector(".cart-item-price");
+            const removeButton = clone.querySelector(".cart-item-remove");
+
+            itemDiv.dataset.id = item.id;
+            itemDiv.dataset.size = item.option;
+
+            itemName.textContent = item.name;
+            itemOptions.textContent = `Size: ${item.option}`;
+            itemQuantity.textContent = item.quantity;
+            itemPrice.textContent = `$${item.price}`;
+
+            removeButton.addEventListener("click", () => {
+                removeFromCart(item.id, item.option);
+            });
+
+            currentCart.appendChild(clone);
+        });
+    }
+
+      // Updates the cart icon number based on the number of items in cart
+      function updateCartIconNum() {
         let totalQty = 0;
 
-        for (let item of cart) {
+        for (let item of cartItems) {
                totalQty += item.quantity;
         }
 
         document.querySelector("#cart-count").textContent = totalQty;
     }
 
+    // Removes an item from the cart through creating a new array and updating the cart
+    function removeFromCart(id, option) {
+        cartItems = cartItems.filter(item => !(item.id == id && item.option == option));
+        updateCart();
+        updateCartIconNum();
+    }
 
 });
 
-// Need to create the JS for the add to cart button
-// Need to create the display for when cart view is selected

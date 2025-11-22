@@ -21,12 +21,11 @@
                 <button id="about" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> About </button>
             </nav>
 
-            <div id="cart" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
-                <p> CART </p>
-                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">
-                    0
-                </span>
+            <div id="cart" class="relative px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
+                <p>CART</p>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">0</span>
             </div>
+
         </header>
 
     <div id="home-view" class="">
@@ -216,11 +215,11 @@
             <!-- Template for one cart item -->
             <template id="cart-item">
                 <div class="cart-item" data-id="" data-size="">
+                    <button class="cart-item-remove">Remove</button>
                     <span class="cart-item-name"></span>
                     <span class="cart-item-options"></span> <!-- e.g. "Size: M" -->
                     <span class="cart-item-quantity"></span>
                     <span class="cart-item-price"></span>
-                    <button class="cart-item-remove">Remove</button>
                 </div>
             </template>
             <div id="cart-items">
