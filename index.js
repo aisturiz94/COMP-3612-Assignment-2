@@ -10,10 +10,15 @@ document.addEventListener("DOMContentLoaded", () => {
         this.price = price;
         this.quantity = quantity;
     }
-    let navButtons = document.querySelectorAll("nav button");
-    let cartButton = document.querySelector('#cart');
+    const navButtons = document.querySelectorAll("nav button");
+    const cartButton = document.querySelector('#cart');
+    const drawer = document.querySelector("#cart-drawer");
+    const drawerOverlay = document.querySelector("#cart-drawer-overlay");
+    const drawerCloseBtn = document.querySelector("#cart-drawer-close");
     let products = [];
-    let cartItems = [];
+    
+    let cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+    updateCartIconNum();
 
     
     const savedData = localStorage.getItem("products");
@@ -45,9 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     changePage(e.target.id, products);
                 }
             });
-        });
-        cartButton.addEventListener("click", () => {
-                changePage("cart", products);
         });
     }
 
@@ -247,6 +249,28 @@ function renderBrowseGrid(list) {
         })
     }
 
+        // OPEN the drawer
+    function openCartDrawer() {
+        drawer.classList.remove("translate-x-full");
+        drawerOverlay.classList.remove("opacity-0", "pointer-events-none");
+    }
+
+    // CLOSE the drawer
+    function closeCartDrawer() {
+        drawer.classList.add("translate-x-full");
+        drawerOverlay.classList.add("opacity-0", "pointer-events-none");
+    }
+
+    // Clicking overlay closes drawer
+    drawerOverlay.addEventListener("click", closeCartDrawer);
+    drawerCloseBtn.addEventListener("click", closeCartDrawer);
+
+    // Cart icon opens drawer
+    document.querySelector("#cart").addEventListener("click", () => {
+        updateCartDrawer();  
+        openCartDrawer();
+    });
+
     // Verifies if a page button was clicked
     function pageButtonClicked(buttonId) {
         const navIds = ["home", "women", "men", "browse", "about"];
@@ -412,76 +436,147 @@ function populateCard(clone, product) {
     price.textContent = `$${product.price.toFixed(2)}`;
 }
 
-    function addToCart(product, cartItems){
+    // OPEN the drawer
+    function openCartDrawer() {
+        drawer.classList.remove("translate-x-full");
+        drawerOverlay.classList.remove("opacity-0", "pointer-events-none");
+    }
 
-      const id = product.id;
-      const name = product.name;
-      const price = product.price;
-      //Need to Work on the Logic to select the Size chosenn by a user
-      const option = `S`;
-      
-      let existingItem = cartItems.find(item => item.id == id);
+    // CLOSE the drawer
+    function closeCartDrawer() {
+        drawer.classList.add("translate-x-full");
+        drawerOverlay.classList.add("opacity-0", "pointer-events-none");
+    }
 
-      if (existingItem) {
-         existingItem.quantity++;
-      } else {
-         cartItems.push(new Cart(id, name, option, price, 1));
-      }
+    // Clicking overlay closes drawer
+    drawerOverlay.addEventListener("click", closeCartDrawer);
+    drawerCloseBtn.addEventListener("click", closeCartDrawer);
 
-      updateCart();
-      updateCartIconNum();
-   }
+    // Cart icon opens drawer
+    document.querySelector("#cart").addEventListener("click", () => {
+        updateCartDrawer();  
+        openCartDrawer();
+    });
 
-    // Updates the cart view items, when an item is added
-    function updateCart() {
-        const currentCart = document.querySelector("#cart-items");
+    // Updates the cart drawer display
+    function updateCartDrawer() {
+        const drawerList = document.querySelector("#cart-drawer-items");
         const template = document.querySelector("#cart-item");
 
-        currentCart.innerHTML = "";
+        drawerList.innerHTML = "";
+
+        let subtotal = 0;
+        let totalQty = 0; 
+        for (let item of cartItems) { 
+            totalQty += item.quantity; 
+        } 
 
         cartItems.forEach(item => {
             const clone = template.content.cloneNode(true);
 
-            const itemDiv = clone.querySelector(".cart-item");
-            const itemName = clone.querySelector(".cart-item-name");
-            const itemOptions = clone.querySelector(".cart-item-options");
-            const itemQuantity = clone.querySelector(".cart-item-quantity");
-            const itemPrice = clone.querySelector(".cart-item-price");
-            const removeButton = clone.querySelector(".cart-item-remove");
+            const div = clone.querySelector(".cart-item");
+            const name = clone.querySelector(".cart-item-name");
+            const options = clone.querySelector(".cart-item-options");
+            const qtyContainer = clone.querySelector(".cart-item-quantity");
+            const price = clone.querySelector(".cart-item-price");
+            const removeBtn = clone.querySelector(".cart-item-remove");
+            const minusBtn = clone.querySelector(".cart-item-minus");
+            const plusBtn = clone.querySelector(".cart-item-plus");
 
-            itemDiv.dataset.id = item.id;
-            itemDiv.dataset.size = item.option;
+            div.dataset.id = item.id;
+            div.dataset.size = item.option;
 
-            itemName.textContent = item.name;
-            itemOptions.textContent = `Size: ${item.option}`;
-            itemQuantity.textContent = item.quantity;
-            itemPrice.textContent = `$${item.price}`;
+            name.textContent = item.name;
+            options.textContent = `Size: ${item.option}`;
+            qtyContainer.textContent = item.quantity;
+            price.textContent = `$${(item.price * item.quantity).toFixed(2)}`;
+            subtotal += item.price * item.quantity;
 
-            removeButton.addEventListener("click", () => {
+
+            minusBtn.addEventListener("click", () => decreaseCartItem(item));
+            plusBtn.addEventListener("click", () => increaseCartItem(item));
+
+
+            removeBtn.addEventListener("click", () => {
                 removeFromCart(item.id, item.option);
             });
 
-            currentCart.appendChild(clone);
+            drawerList.appendChild(clone);
         });
-    }
 
-      // Updates the cart icon number based on the number of items in cart
-      function updateCartIconNum() {
-        let totalQty = 0;
-
-        for (let item of cartItems) {
-               totalQty += item.quantity;
+        if(totalQty == 1){
+            document.querySelector("#drawer-subtotal").textContent = `Subtotal: $${subtotal.toFixed(2)} (1 item)`;
+        }
+        else {
+            document.querySelector("#drawer-subtotal").textContent = `Subtotal: $${subtotal.toFixed(2)} (${totalQty} items)`;
         }
 
-        document.querySelector("#cart-count").textContent = totalQty;
+        saveCart();
     }
 
-    // Removes an item from the cart through creating a new array and updating the cart
+    // Adds an item to the cart
+    function addToCart(product, cartItems) {
+
+        const id = product.id;
+        const name = product.name;
+        const price = product.price;
+        const option = "S"; // TODO: replace with selected size
+
+        let existingItem = cartItems.find(item => item.id == id && item.option == option);
+
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cartItems.push(new Cart(id, name, option, price, 1));
+        }
+
+        updateCartIconNum();
+        updateCartDrawer();
+        saveCart();
+    }
+
+    // Removes an item from the cart
     function removeFromCart(id, option) {
         cartItems = cartItems.filter(item => !(item.id == id && item.option == option));
-        updateCart();
+        updateCartIconNum();
+        updateCartDrawer();
+        saveCart();
+    }
+
+    function updateCartIconNum() { 
+        let totalQty = 0; 
+        for (let item of cartItems) { 
+            totalQty += item.quantity; 
+        } 
+        document.querySelector("#cart-count").textContent = totalQty; 
+    }
+
+    function saveCart() {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+    }
+
+    function decreaseCartItem(item) {
+        if (item.quantity > 1) {
+            item.quantity--;
+        } else {
+            // Remove item if quantity reaches zero
+            cartItems = cartItems.filter(i => !(i.id == item.id && i.option == item.option));
+        }
+
+        saveCart();
+        updateCartDrawer();
         updateCartIconNum();
     }
+
+    function increaseCartItem(item) {
+        item.quantity++;
+
+        saveCart();
+        updateCartDrawer();
+        updateCartIconNum();
+    }
+
+
 
 });
 

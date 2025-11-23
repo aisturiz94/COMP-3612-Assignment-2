@@ -218,7 +218,11 @@
                     <button class="cart-item-remove">Remove</button>
                     <span class="cart-item-name"></span>
                     <span class="cart-item-options"></span> <!-- e.g. "Size: M" -->
-                    <span class="cart-item-quantity"></span>
+                    <div class="cart-item-quantity-wrapper flex items-center space-x-2">
+                        <button class="cart-item-minus px-2 py-1 bg-gray-200 rounded">−</button>
+                        <span class="cart-item-quantity">1</span>
+                        <button class="cart-item-plus px-2 py-1 bg-gray-200 rounded">+</button>
+                    </div>
                     <span class="cart-item-price"></span>
                 </div>
             </template>
@@ -285,6 +289,48 @@
             <p>© 2025 FANCY STORE NAME</p>
             <a href="github link" class="text-blue-600 underline"> GitHub Repository </a>
         </footer>
+
+            <!-- CART DRAWER OVERLAY -->
+    <div id="cart-drawer-overlay" 
+        class="fixed inset-0 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300 z-40">
+    </div>
+
+    <!-- CART DRAWER PANEL -->
+    <div id="cart-drawer" 
+        class="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-xl translate-x-full transition-transform duration-300 z-50 flex flex-col">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b">
+            <h2 class="text-lg font-semibold">Shopping Cart</h2>
+            <button id="cart-drawer-close" class="p-2 text-gray-500 hover:text-black">
+                ✕
+            </button>
+        </div>
+
+        <!-- Cart Items -->
+        <div id="cart-drawer-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- JS populates items using your template -->
+        </div>
+
+        <!-- Footer -->
+        <div class="border-t p-4 space-y-3">
+            <p id="drawer-subtotal" class="text-lg font-semibold">
+                Subtotal: $0.00
+            </p>
+
+            <button 
+                id="drawer-checkout"
+                class="w-full bg-black text-white py-3 rounded-md text-center font-medium hover:bg-gray-800">
+                Checkout
+            </button>
+
+            <button 
+                id="drawer-continue"
+                class="w-full text-center text-sm text-gray-600 hover:text-black">
+                Continue Shopping →
+            </button>
+        </div>
+    </div>
 </body>
 
 
