@@ -138,100 +138,101 @@ function initBrowse(products) {
         category: "",
         sort: "name-asc"
     };
-//Applies filters
+
+    //Applies filters
     function applyFilters() {
-        let result = products.slice();
+            let result = products.slice();
 
-        if (filters.gender) {
-            result = result.filter(p => p.gender === filters.gender + "s");
+            if (filters.gender) {
+                result = result.filter(p => p.gender === filters.gender + "s");
+            }
+
+            if (filters.category) {
+                const selectedCat = filters.category.toLowerCase();
+                result = result.filter(p =>
+                    p.category && p.category.toLowerCase() === selectedCat);
+            }
+
+            if (filters.search) {
+                const term = filters.search.toLowerCase();
+                result = result.filter(p => p.name.toLowerCase().includes(term));
+            }
+            
+            if (filters.sort === "name-asc") {
+                result.sort((a,b) => a.name.localeCompare(b.name));
+            }
+
+            if (filters.sort === "price-asc") {
+                result.sort((a, b) => a.price - b.price);
+            }
+
+            if (filters.sort === "price-desc") {
+                result.sort((a, b) => b.price - a.price);
+            }
+
+            renderBrowseGrid(result);
         }
 
-        if (filters.category) {
-            const selectedCat = filters.category.toLowerCase();
-            result = result.filter(p =>
-                p.category && p.category.toLowerCase() === selectedCat);
-        }
+        //Sort and apply filter
+        searchInput.addEventListener("input", () => {
+            filters.search = searchInput.value.trim();
+            applyFilters();
+        });
 
-        if (filters.search) {
-            const term = filters.search.toLowerCase();
-            result = result.filter(p => p.name.toLowerCase().includes(term));
-        }
-        
-        if (filters.sort === "name-asc") {
-            result.sort((a,b) => a.name.localeCompare(b.name));
-        }
+        genderSelect.addEventListener("change", () => {
+            filters.gender = genderSelect.value; 
+            applyFilters();
+        });
 
-        if (filters.sort === "price-asc") {
-            result.sort((a, b) => a.price - b.price);
-        }
+        categorySelect.addEventListener("change", () => {
+            filters.category = categorySelect.value;
+            applyFilters();
+        });
 
-        if (filters.sort === "price-desc") {
-            result.sort((a, b) => b.price - a.price);
-        }
+        sortSelect.addEventListener("change", () => {
+            filters.sort = sortSelect.value;
+            applyFilters();
+        });
 
-        renderBrowseGrid(result);
+        clearBtn.addEventListener("click", () => {
+            filters = { search: "", gender: "", category: "", sort: "" };
+
+            searchInput.value = "";
+            genderSelect.value = "";
+            categorySelect.value = "";
+            sortSelect.value = "";
+
+            applyFilters();
+        });
+        applyFilters();
     }
 
-    //Sort and apply filter
-    searchInput.addEventListener("input", () => {
-        filters.search = searchInput.value.trim();
-        applyFilters();
-    });
 
-    genderSelect.addEventListener("change", () => {
-        filters.gender = genderSelect.value; 
-        applyFilters();
-    });
+    //Renders the grid for the browse view
+    function renderBrowseGrid(list) {
+        const grid = document.querySelector("#display-items-grid");
+        const template = document.querySelector("#product-card-template");
 
-    categorySelect.addEventListener("change", () => {
-        filters.category = categorySelect.value;
-        applyFilters();
-    });
+        /* remove old product cards */
+        grid.querySelectorAll(".product-card").forEach(c => c.remove());
 
-    sortSelect.addEventListener("change", () => {
-        filters.sort = sortSelect.value;
-        applyFilters();
-    });
+        list.forEach(product => {
+            const clone = template.content.cloneNode(true);
 
-    clearBtn.addEventListener("click", () => {
-        filters = { search: "", gender: "", category: "", sort: "" };
+            const card = clone.querySelector(".product-card");
+            const img = clone.querySelector(".product-image");
+            const title = clone.querySelector(".product-title");
+            const price = clone.querySelector(".product-price");
 
-        searchInput.value = "";
-        genderSelect.value = "";
-        categorySelect.value = "";
-        sortSelect.value = "";
+            card.dataset.id = product.id;
+            img.src = "https://placehold.co/600x400/png?text=Place+holder";
+            img.alt = product.name;
+            title.textContent = product.name;
+            price.textContent = `$${product.price.toFixed(2)}`;
 
-        applyFilters();
-    });
-    applyFilters();
-}
-
-
-//Renders the grid for the browse view
-function renderBrowseGrid(list) {
-    const grid = document.querySelector("#display-items-grid");
-    const template = document.querySelector("#product-card-template");
-
-    /* remove old product cards */
-    grid.querySelectorAll(".product-card").forEach(c => c.remove());
-
-    list.forEach(product => {
-        const clone = template.content.cloneNode(true);
-
-        const card = clone.querySelector(".product-card");
-        const img = clone.querySelector(".product-image");
-        const title = clone.querySelector(".product-title");
-        const price = clone.querySelector(".product-price");
-
-        card.dataset.id = product.id;
-        img.src = "https://placehold.co/600x400/png?text=Place+holder";
-        img.alt = product.name;
-        title.textContent = product.name;
-        price.textContent = `$${product.price.toFixed(2)}`;
-
-        grid.appendChild(clone);
-    });
-}
+            grid.appendChild(clone);
+        });
+    }
 
     //Activates a page's buttons event listener
     function activateButtonListener(viewId) {
@@ -249,28 +250,6 @@ function renderBrowseGrid(list) {
         })
     }
 
-        // OPEN the drawer
-    function openCartDrawer() {
-        drawer.classList.remove("translate-x-full");
-        drawerOverlay.classList.remove("opacity-0", "pointer-events-none");
-    }
-
-    // CLOSE the drawer
-    function closeCartDrawer() {
-        drawer.classList.add("translate-x-full");
-        drawerOverlay.classList.add("opacity-0", "pointer-events-none");
-    }
-
-    // Clicking overlay closes drawer
-    drawerOverlay.addEventListener("click", closeCartDrawer);
-    drawerCloseBtn.addEventListener("click", closeCartDrawer);
-
-    // Cart icon opens drawer
-    document.querySelector("#cart").addEventListener("click", () => {
-        updateCartDrawer();  
-        openCartDrawer();
-    });
-
     // Verifies if a page button was clicked
     function pageButtonClicked(buttonId) {
         const navIds = ["home", "women", "men", "browse", "about"];
@@ -285,7 +264,7 @@ function renderBrowseGrid(list) {
     // Changes the web page being displayed by hiding
     // all of them and setting the selected page visible.
     function changePage(viewId, products) {
-            const views = ["home-view", "women-view", "men-view" ,"browse-view", "product-view", "cart-view","about-view"];
+            const views = ["home-view", "women-view", "men-view" ,"browse-view", "product-view","about-view"];
 
             if (viewId == "women" || viewId == "men"){
                 loadGenderProducts(viewId, products);
@@ -407,42 +386,43 @@ function renderBrowseGrid(list) {
         populateCard(clone, product);
         grid.appendChild(clone);
     });
-}
-//Creates a card to be displayed with the product info
-function populateCard(clone, product) {
-    const card = clone.querySelector(".product-card");
-    const img = clone.querySelector(".product-image");
-    const title = clone.querySelector(".product-title");
-    const price = clone.querySelector(".product-price");
-    const addBtn = clone.querySelector(".btn-add");
-    const detailBtn = clone.querySelector(".btn-details");
-    
-    // NEW: Select the color elements
-    const colorDot = clone.querySelector(".product-color-dot");
-    const colorName = clone.querySelector(".product-color-name");
+    }
+    //Creates a card to be displayed with the product info
+    function populateCard(clone, product) {
+        const card = clone.querySelector(".product-card");
+        const img = clone.querySelector(".product-image");
+        const title = clone.querySelector(".product-title");
+        const price = clone.querySelector(".product-price");
+        const addBtn = clone.querySelector(".btn-add");
+        const detailBtn = clone.querySelector(".btn-details");
+        
+        // NEW: Select the color elements
+        const colorDot = clone.querySelector(".product-color-dot");
+        const colorName = clone.querySelector(".product-color-name");
 
-    // Set IDs
-    card.dataset.id = product.id;
-    addBtn.dataset.productId = product.id;
-    // Also set ID on details button for your listener
-    if (detailBtn){
-        detailBtn.dataset.productId = product.id; 
+        // Set IDs
+        card.dataset.id = product.id;
+        addBtn.dataset.productId = product.id;
+        
+        // Also set ID on details button for your listener
+        if (detailBtn){
+            detailBtn.dataset.productId = product.id; 
+        }
+
+        // Set Content
+        img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=PLace+Holder`;
+        img.alt = product.name;
+        title.textContent = product.name;
+        price.textContent = `$${product.price.toFixed(2)}`;
     }
 
-    // Set Content
-    img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=PLace+Holder`;
-    img.alt = product.name;
-    title.textContent = product.name;
-    price.textContent = `$${product.price.toFixed(2)}`;
-}
-
-    // OPEN the drawer
+    // Opens the drawer
     function openCartDrawer() {
         drawer.classList.remove("translate-x-full");
         drawerOverlay.classList.remove("opacity-0", "pointer-events-none");
     }
 
-    // CLOSE the drawer
+    // Closes the drawer
     function closeCartDrawer() {
         drawer.classList.add("translate-x-full");
         drawerOverlay.classList.add("opacity-0", "pointer-events-none");
@@ -463,13 +443,15 @@ function populateCard(clone, product) {
         const drawerList = document.querySelector("#cart-drawer-items");
         const template = document.querySelector("#cart-item");
 
+        const shippingSelect = document.querySelector("#shipping-select");
+        const destinationSelect = document.querySelector("#destination-select");
+        const checkoutBtn = document.querySelector("#drawer-checkout");
+
         drawerList.innerHTML = "";
 
         let subtotal = 0;
-        let totalQty = 0; 
-        for (let item of cartItems) { 
-            totalQty += item.quantity; 
-        } 
+        let totalQty = 0;
+        for (let item of cartItems) totalQty += item.quantity;
 
         cartItems.forEach(item => {
             const clone = template.content.cloneNode(true);
@@ -492,27 +474,60 @@ function populateCard(clone, product) {
             price.textContent = `$${(item.price * item.quantity).toFixed(2)}`;
             subtotal += item.price * item.quantity;
 
-
             minusBtn.addEventListener("click", () => decreaseCartItem(item));
             plusBtn.addEventListener("click", () => increaseCartItem(item));
-
-
-            removeBtn.addEventListener("click", () => {
-                removeFromCart(item.id, item.option);
-            });
+            removeBtn.addEventListener("click", () => removeFromCart(item.id, item.option));
 
             drawerList.appendChild(clone);
         });
 
-        if(totalQty == 1){
-            document.querySelector("#drawer-subtotal").textContent = `Subtotal: $${subtotal.toFixed(2)} (1 item)`;
+        const disabled = cartItems.length === 0;
+        shippingSelect.disabled = disabled;
+        destinationSelect.disabled = disabled;
+        checkoutBtn.disabled = disabled;
+
+        if (!disabled) {
+            if (!shippingSelect.value) {
+                shippingSelect.value = "standard";
+            }
+            if (!destinationSelect.value) { 
+                destinationSelect.value = "canada";
+            }
         }
-        else {
-            document.querySelector("#drawer-subtotal").textContent = `Subtotal: $${subtotal.toFixed(2)} (${totalQty} items)`;
+
+        let shippingCost = 0;
+        const destination = destinationSelect.value;
+        const shippingType = shippingSelect.value;
+
+        const shippingTable = {
+            canada: { standard: 10, express: 25, priority: 35 },
+            "united-states": { standard: 15, express: 25, priority: 50 },
+            international: { standard: 20, express: 30, priority: 50 }
+        };
+
+        if (!disabled) {
+            shippingCost = subtotal > 500 ? 0 : shippingTable[destination][shippingType];
+        }
+
+        let taxRate = destination === "canada" ? 0.05 : 0.08;
+        let tax = subtotal * taxRate;
+
+        document.querySelector("#drawer-merch-total").textContent = `Merchandise Total: $${subtotal.toFixed(2)}`;
+        document.querySelector("#drawer-shipping-cost").textContent = `Shipping: $${shippingCost.toFixed(2)}`;
+        document.querySelector("#drawer-tax").textContent = `Tax: $${tax.toFixed(2)}`;
+
+        const total = subtotal + shippingCost + tax;
+        if(totalQty === 1){
+            document.querySelector("#drawer-subtotal").textContent = `Subtotal: $${total.toFixed(2)} (1 item)`;
+        } else {
+            document.querySelector("#drawer-subtotal").textContent = `Subtotal: $${total.toFixed(2)} (${totalQty} items)`;
         }
 
         saveCart();
     }
+
+    document.querySelector("#shipping-select").addEventListener("change", updateCartDrawer);
+    document.querySelector("#destination-select").addEventListener("change", updateCartDrawer);
 
     // Adds an item to the cart
     function addToCart(product, cartItems) {
@@ -577,6 +592,35 @@ function populateCard(clone, product) {
     }
 
 
+    function showToaster(message) {
 
+        const toast = document.createElement("div");
+        toast.textContent = message;
+        toast.className = "fixed bottom-4 right-4 bg-black text-white px-4 py-2 rounded shadow-lg opacity-0 transition-opacity duration-300 z-50";
+
+        document.body.appendChild(toast);
+
+        setTimeout(() => toast.classList.remove("opacity-0"), 50);
+
+        setTimeout(() => {
+            toast.classList.add("opacity-0");
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    document.querySelector("#drawer-checkout").addEventListener("click", () => {
+        if (cartItems.length === 0) return;
+
+        showToaster("Checkout successful! Thank you for your purchase.");
+
+        cartItems = [];
+        saveCart();
+        updateCartIconNum();
+        updateCartDrawer();
+
+        closeCartDrawer();
+
+        changePage("home", products);
+    });
+    // Need to implement the size chose display and the color chosen display in the cart
 });
-
