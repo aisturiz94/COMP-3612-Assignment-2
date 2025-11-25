@@ -40,6 +40,14 @@ document.addEventListener("DOMContentLoaded", () => {
             setNavButtonListener(products);
     });
     }
+//Close button for about us
+    document.addEventListener("click", e => {
+        const closeButton = document.querySelector("#close-window");
+        const aboutView = document.querySelector("#about-view")
+        if (e.target.id === closeButton.id) {
+            aboutView.classList.toggle("hidden");
+        }
+    })
     initBrowse(products);
     loadHomeProducts(products);
     //Adds an event listener to all the navigation buttons
@@ -133,6 +141,7 @@ function initBrowse(products) {
     const categorySelect = document.querySelector("#filter-category");
     const clearBtn = document.querySelector("#clear-filters");
     const grid = document.querySelector("#display-items-grid");
+    const activeFiltersContainer = document.querySelector("#active-filters");
 
     /* filter state */
     let filters = {
@@ -173,14 +182,51 @@ function initBrowse(products) {
                 result.sort((a, b) => b.price - a.price);
             }
 
-            renderBrowseGrid(result);
-        }
+        renderBrowseGrid(result);
+        renderActiveFilters();
+    }
+    function renderActiveFilters() {
+            if (!activeFiltersContainer) return;
+            activeFiltersContainer.innerHTML = "";
 
-        //Sort and apply filter
-        searchInput.addEventListener("input", () => {
-            filters.search = searchInput.value.trim();
-            applyFilters();
-        });
+            // Helper to create a chip
+            const createChip = (label, type) => {
+                const btn = document.createElement("button");
+                btn.className = "flex items-center gap-2 px-3 py-1 bg-gray-100 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-gray-200 transition-colors";
+                btn.innerHTML = `<span>${label}</span><span class="text-gray-500 hover:text-red-500">✕</span>`;
+                
+                btn.onclick = () => {
+                    // Logic to remove specific filter
+                    if (type === "search") {
+                        filters.search = "";
+                        searchInput.value = "";
+                    } else if (type === "gender") {
+                        filters.gender = "";
+                        genderSelect.value = "";
+                    } else if (type === "category") {
+                        filters.category = "";
+                        categorySelect.value = "";
+                    }
+                    applyFilters();
+                };
+                activeFiltersContainer.appendChild(btn);
+            };
+            // Check each filter and create chip if active
+            if (filters.search) {
+                createChip(`Search: "${filters.search}"`, "search");
+            }
+            if (filters.gender) {
+                createChip(`Gender: ${filters.gender}`, "gender");
+            }
+            if (filters.category) {
+                createChip(`Category: ${filters.category}`, "category");
+            }
+        }
+    //Sort and apply filter
+    searchInput.addEventListener("input", () => {
+        filters.search = searchInput.value.trim();
+        applyFilters();
+    });
 
         genderSelect.addEventListener("change", () => {
             filters.gender = genderSelect.value; 
@@ -267,94 +313,183 @@ function initBrowse(products) {
     // Changes the web page being displayed by hiding
     // all of them and setting the selected page visible.
     function changePage(viewId, products) {
-            const views = ["home-view", "women-view", "men-view" ,"browse-view", "product-view","about-view"];
+        const views = ["home-view", "women-view", "men-view", "browse-view", "product-view", "cart-view"];
+       
+        if (viewId == "women" || viewId == "men") {
+            loadGenderProducts(viewId, products);
+        }
 
-            if (viewId == "women" || viewId == "men"){
-                loadGenderProducts(viewId, products);
+        if (viewId == "about") {
+            const aboutView = document.getElementById("about-view");
+            aboutView.classList.remove("hidden");
+            return;
+        }
 
-                const heroDiv = document.getElementById(`${viewId}-hero-image`);
-                heroDiv.innerHTML = "";
+        // 3. Normal Page Switching
+        views.forEach(view => {
+            document.getElementById(view).classList.add("hidden");
+            disableButtonListener(viewId);
+        });
 
-                const img = document.createElement("img");
-                img.src = `https://placehold.co/1200x400/png?text=${viewId}+Place+holder`;
-                img.alt = viewId;
-                img.className = "w-full h-auto object-cover";
+        document.getElementById(`${viewId}-view`).classList.remove("hidden");
+        activateButtonListener(viewId);
+    }
+    
 
-                heroDiv.appendChild(img);
+function showProductDetail(product) {
+        // 1. Cache DOM Elements
+        const elements = {
+            img: document.querySelector("#product-image"),
+            title: document.querySelector("#product-title"),
+            price: document.querySelector("#product-price"),
+            material: document.querySelector("#product-material"),
+            desc: document.querySelector("#product-description"),
+            colour: document.querySelector("#product-colour"),
+            sizeOptions: document.querySelector("#size-options"),
+            qtyInput: document.querySelector("#quantity-input"),
+            qtyMinus: document.querySelector("#qty-minus"),
+            qtyPlus: document.querySelector("#qty-plus"),
+            btnAdd: document.querySelector("#btn-add"),
+            detailArticle: document.querySelector("#product-detail"),
+            crumbs: {
+                home: document.querySelector("#crumb-home"),
+                gender: document.querySelector("#breadcrumb-gender"),
+                category: document.querySelector("#breadcrumb-category"),
+                product: document.querySelector("#breadcrumb-product")
             }
-            views.forEach(view => {
-                document.getElementById(view).classList.add("hidden");
-                disableButtonListener(viewId);
-            });
+        };
 
-            document.getElementById(`${viewId}-view`).classList.remove("hidden");
-            activateButtonListener(viewId);
-    }
-    //shows product details when clicking "More details"
-    function showProductDetail(product) {
-        const img = document.querySelector("#product-image"); 
-        const titleEl = document.querySelector("#product-title");
-        const priceEl = document.querySelector("#product-price");
-        const materialEl = document.querySelector("#product-material");
-        const descEl = document.querySelector("#product-description");
-        const colourEl = document.querySelector("#product-colour");
-        const crumbGender = document.querySelector("#breadcrumb-gender");
-        const crumbCategory = document.querySelector("#breadcrumb-category");
-        const crumbProduct = document.querySelector("#breadcrumb-product");
-        const sizeOptions = document.querySelector("#size-options");
-        const qtyInput = document.querySelector("#quantity-input");
+        elements.detailArticle.dataset.id = product.id;
 
-        //store current product id on the detail element for later (cart, etc.)
-        const detailArticle = document.querySelector("#product-detail");
-        detailArticle.dataset.id = product.id;
+        // 2. Apply Styles (Safe call)
+        styleProductPage(elements.title, elements.price, elements.desc, elements.material, elements.colour, elements.btnAdd, elements.sizeOptions);
 
-        img.src = "https://placehold.co/600x400/png?text=Placeholder";
-        img.alt = product.name;
+        // 3. Populate Content
+        populateProductInfo(product, elements);
 
-        /* main info */
-        titleEl.textContent = product.name;
-        priceEl.textContent = `$${product.price.toFixed(2)}`;
-        materialEl.textContent = product.material;
-        descEl.textContent = product.description;
-        colourEl.textContent = product.color[0].name;
+        // 4. Setup Breadcrumbs
+        setupBreadcrumbs(product, elements.crumbs);
 
-        /* breadcrumb */
-        if (product.gender === "mens") {
-            crumbGender.textContent = "Men";
-        } else if (product.gender === "womens") {
-            crumbGender.textContent = "Women";
-        } else {
-            crumbGender.textContent = "All";
-        }
+        // 5. Setup Size Buttons
+        setupSizeButtons(product, elements.sizeOptions);
 
-        if (product.category) {
-            const cat = product.category;
-            crumbCategory.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
-        } else {
-            crumbCategory.textContent = "Category";
-        }
+        // 6. Setup Quantity Controls
+        setupQuantityControls(elements.qtyInput, elements.qtyMinus, elements.qtyPlus);
 
-        crumbProduct.textContent = product.name;
+        // 7. Setup Add to Cart Button
+        setupAddToCartButton(product, elements.btnAdd, elements.qtyInput);
 
-        /* sizes */
-        sizeOptions.innerHTML = "";
-        if (product.sizes && product.sizes.length) {
-            product.sizes.forEach(size => {
-                const box = document.createElement("button");
-                box.type = "button";
-                box.className = "size-display-box";
-                box.textContent = size;
-                sizeOptions.appendChild(box);
-            });
-        }
-
-        //reset quantity
-        if (qtyInput) {
-            qtyInput.value = 1;
-        }
         renderRelatedProducts(product);
-        changePage("product");
+        changePage("product", products);
     }
+
+    // --- Helpers ---
+
+    function populateProductInfo(product, els) {
+        els.img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=${product.name.substring(0,3).toUpperCase()}`;
+        els.img.alt = product.name;
+        els.title.textContent = product.name;
+        els.price.textContent = `$${product.price.toFixed(2)}`;
+        els.desc.textContent = product.description;
+
+        els.material.innerHTML = `<span class="font-bold text-black uppercase tracking-wide text-xs">Material:</span> ${product.material}`;
+        const colorName = product.color && product.color.length > 0 ? product.color[0].name : "N/A";
+        els.colour.innerHTML = `<span class="font-bold text-black uppercase tracking-wide text-xs">Colour:</span> ${colorName}`;
+    }
+
+    function setupBreadcrumbs(product, crumbs) {
+        if (crumbs.home) crumbs.home.onclick = () => changePage("home", products);
+
+        let genderText = "All";
+        let genderId = "browse";
+        if (product.gender === "mens") { genderText = "Men"; genderId = "men"; }
+        else if (product.gender === "womens") { genderText = "Women"; genderId = "women"; }
+
+        if (crumbs.gender) {
+            crumbs.gender.textContent = genderText;
+            crumbs.gender.onclick = () => changePage(genderId, products);
+        }
+
+        if (product.category && crumbs.category) {
+            const cat = product.category;
+            crumbs.category.textContent = cat.charAt(0).toUpperCase() + cat.slice(1);
+            crumbs.category.onclick = () => changePage("browse", products);
+        }
+        if (crumbs.product) crumbs.product.textContent = product.name;
+    }
+
+    function setupSizeButtons(product, container) {
+        if (!container) return;
+        container.innerHTML = "";
+        if (product.sizes && product.sizes.length) {
+            product.sizes.forEach((size, index) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.textContent = size;
+                btn.className = `w-10 h-10 border border-gray-300 text-sm font-medium flex items-center justify-center transition-colors hover:border-black`;
+                if (index === 0) btn.classList.add("bg-black", "text-white", "border-black");
+
+                btn.onclick = () => {
+                    Array.from(container.children).forEach(b => {
+                        b.classList.remove("bg-black", "text-white", "border-black");
+                        b.classList.add("border-gray-300");
+                    });
+                    btn.classList.remove("border-gray-300");
+                    btn.classList.add("bg-black", "text-white", "border-black");
+                };
+                container.appendChild(btn);
+            });
+        }
+    }
+
+    function setupQuantityControls(input, minusBtn, plusBtn) {
+        if (input) input.value = 1;
+        if (minusBtn) {
+            const newMinus = minusBtn.cloneNode(true);
+            minusBtn.parentNode.replaceChild(newMinus, minusBtn);
+            newMinus.onclick = () => {
+                let val = parseInt(input.value) || 1;
+                if (val > 1) input.value = val - 1;
+            };
+        }
+        if (plusBtn) {
+            const newPlus = plusBtn.cloneNode(true);
+            plusBtn.parentNode.replaceChild(newPlus, plusBtn);
+            newPlus.onclick = () => {
+                let val = parseInt(input.value) || 1;
+                input.value = val + 1;
+            };
+        }
+    }
+
+    function setupAddToCartButton(product, btn, input) {
+        if (!btn) return;
+        const newBtnAdd = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtnAdd, btn);
+        newBtnAdd.onclick = () => {
+            const qty = input ? (parseInt(input.value) || 1) : 1;
+            addToCart(product, cartItems);
+            alert(`Added ${qty} x ${product.name} to cart.`);
+        };
+    }
+
+    function renderRelatedProducts(product) {
+        const relatedGrid = document.querySelector("#related-grid");
+        const template = document.querySelector("#product-card-template");
+        if (!relatedGrid || !template) return;
+        
+        relatedGrid.innerHTML = "";
+        let related = products.filter(p => p.id !== product.id && p.category === product.category).slice(0, 4);
+
+        related.forEach(item => {
+            const clone = template.content.cloneNode(true);
+            populateCard(clone, item);
+            relatedGrid.appendChild(clone);
+        });
+    }
+
+
+
 
     function renderRelatedProducts(product) {
         const relatedGrid = document.querySelector("#related-grid");
@@ -604,6 +739,25 @@ function initBrowse(products) {
         updateCartIconNum();
     }
 
+function styleProductPage(titleEl, priceEl, descEl, materialEl, colourEl, btnAdd, sizeOptions) {
+        // Title & Price
+        titleEl.className = "text-3xl lg:text-4xl font-black tracking-tighter uppercase mb-2";
+        priceEl.className = "text-xl font-bold text-gray-900 mb-4";
+
+        // Description & Details
+        descEl.className = "text-gray-600 leading-relaxed mb-4";
+        materialEl.className = "text-sm text-gray-600";
+        colourEl.className = "text-sm text-gray-600";
+
+        // Add to Cart Button
+        btnAdd.className = "flex-1 bg-black text-white py-3 px-6 uppercase font-bold tracking-widest hover:bg-gray-800 transition-colors h-full"; 
+        
+        // Size Options Container
+        sizeOptions.className = "flex flex-wrap gap-2 mt-2"; 
+    }
+
+});
+
 
     function showToaster(message) {
 
@@ -635,5 +789,3 @@ function initBrowse(products) {
 
         changePage("home", products);
     });
-    // Need to implement the size chose display and the color chosen display in the cart
-});
