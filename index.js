@@ -292,7 +292,7 @@ function initBrowse(products) {
     }
     //shows product details when clicking "More details"
     function showProductDetail(product) {
-        const img = document.querySelector("#product-image");
+        const img = document.querySelector("#product-image"); 
         const titleEl = document.querySelector("#product-title");
         const priceEl = document.querySelector("#product-price");
         const materialEl = document.querySelector("#product-material");
