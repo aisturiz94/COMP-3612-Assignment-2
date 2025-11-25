@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    //Close button for about us
     document.addEventListener("click", e => {
         const closeButton = document.querySelector("#close-window");
         const aboutView = document.querySelector("#about-view")
@@ -91,8 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
             changePage("home", products);
         });
     }
-
-    //event delegation for "More Details" & "Add to Cart(not done yet" 
     document.addEventListener("click", e => {
 
         const isDetails = e.target.classList.contains("btn-details");
@@ -114,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (isAdd) {
             addToCart(product, cartItems);
+
         }
     });
 
@@ -249,7 +247,6 @@ function initBrowse(products) {
             }
         }
 
-        //Sort and apply filter
         searchInput.addEventListener("input", () => {
             filters.search = searchInput.value.trim();
             applyFilters();
@@ -373,7 +370,6 @@ function initBrowse(products) {
      * Output: None (DOM updates and page change)
      */
 function showProductDetail(product) {
-        // 1. Cache DOM Elements
         const elements = {
             img: document.querySelector("#product-image"),
             title: document.querySelector("#product-title"),
@@ -556,10 +552,11 @@ function showProductDetail(product) {
         if (!btn) return;
         const newBtnAdd = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtnAdd, btn);
+
         newBtnAdd.onclick = () => {
             const qty = input ? (parseInt(input.value) || 1) : 1;
             addToCart(product, cartItems);
-            alert(`Added ${qty} x ${product.name} to cart.`);
+            showToaster(`Added ${qty} x ${product.name} to cart.`);
         };
     }
     /**
@@ -636,7 +633,6 @@ function loadGenderProducts(genderView, products) {
         title.textContent = product.name;
         price.textContent = `$${product.price.toFixed(2)}`;
 
-        //Color logic
         const col = product.color[0];
         colorName.textContent = col.name;
         colorDot.style.backgroundColor = col.hex;
@@ -803,6 +799,7 @@ function loadGenderProducts(genderView, products) {
             existingItem.quantity++;
         } else {
             cartItems.push(new Cart(id, name, selectedSize, price, 1, selectedColor));
+            showToaster(`Added ${name} to cart.`);
         }
 
         updateCartIconNum();
@@ -854,7 +851,6 @@ function loadGenderProducts(genderView, products) {
         if (item.quantity > 1) {
             item.quantity--;
         } else {
-            // Remove item if quantity reaches zero
             cartItems = cartItems.filter(i => !(i.id == item.id && i.option == item.option));
         }
 
@@ -882,19 +878,16 @@ function loadGenderProducts(genderView, products) {
      * Output: None (DOM classes updated)
      */
 function styleProductPage(titleEl, priceEl, descEl, materialEl, colourEl, btnAdd, sizeOptions) {
-        // Title & Price
+        
         titleEl.className = "text-3xl lg:text-4xl font-black tracking-tighter uppercase mb-2";
         priceEl.className = "text-xl font-bold text-gray-900 mb-4";
 
-        // Description & Details
         descEl.className = "text-gray-600 leading-relaxed mb-4";
         materialEl.className = "text-sm text-gray-600";
         colourEl.className = "text-sm text-gray-600";
 
-        // Add to Cart Button
         btnAdd.className = "flex-1 bg-black text-white py-3 px-6 uppercase font-bold tracking-widest hover:bg-gray-800 transition-colors h-full"; 
         
-        // Size Options Container
         sizeOptions.className = "flex flex-wrap gap-2 mt-2"; 
     }
     /**
