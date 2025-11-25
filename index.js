@@ -68,8 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", e => {
 
         // Check if the click is on More Details or Add to Cart
-        const isDetails = e.target.classList.contains("btn-details");
-        const isAdd = e.target.classList.contains("btn-add");
+        const isDetails = e.target.closest(".btn-details");
+        const isAdd = e.target.closest(".btn-add");
 
         if (!isDetails && !isAdd) {
             return;
@@ -96,39 +96,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function loadHomeProducts(products) {
         const homeSection = document.querySelector("#featured-products");
-        const gridContainer = document.createElement("div");
+        homeSection.replaceChildren();
         
+        const h2 = document.createElement("h2");
+        h2.className = "text-3xl font-bold mb-8 text-center";
+        h2.textContent = "Featured Items";
+        homeSection.appendChild(h2);
+        
+        const gridContainer = document.createElement("div");
         gridContainer.id = "home-grid";
-        gridContainer.className = "grid grid-cols-1 md:grid-cols-4 gap-4"; 
+        gridContainer.className = "grid grid-cols-1 md:grid-cols-4 gap-4";
         const template = document.querySelector("#product-card-template");
 
-        //Pick 4 random products
-        const shuffled = products.sort(() => 0.5 - Math.random());
+        const shuffled = [...products].sort(() => 0.5 - Math.random());
         const featured = shuffled.slice(0, 4);
 
-        // Loop and Append
         featured.forEach(product => {
-            // Clone the template content
             const clone = template.content.cloneNode(true);
-            // Populate Data
-            const card = clone.querySelector(".product-card");
-            const img = clone.querySelector(".product-image");
-            const title = clone.querySelector(".product-title");
-            const price = clone.querySelector(".product-price");
-            
-            card.dataset.id = product.id;
-
-            // Set Content
-            img.src = "https://placehold.co/600x400/png?text=Place+Holder";
-            img.alt = product.name;
-            title.textContent = product.name;
-            price.textContent = `$${product.price.toFixed(2)}`;
-
-            // Append the populated clone to the grid container
+            populateCard(clone, product); 
             gridContainer.appendChild(clone);
         });
 
-        // 7. Finally, add the grid to the page
         homeSection.appendChild(gridContainer);
     }
 //initializes all elements in the browse view so we can do stuff to it
@@ -262,23 +250,11 @@ function initBrowse(products) {
         const grid = document.querySelector("#display-items-grid");
         const template = document.querySelector("#product-card-template");
 
-        /* remove old product cards */
         grid.querySelectorAll(".product-card").forEach(c => c.remove());
 
         list.forEach(product => {
             const clone = template.content.cloneNode(true);
-
-            const card = clone.querySelector(".product-card");
-            const img = clone.querySelector(".product-image");
-            const title = clone.querySelector(".product-title");
-            const price = clone.querySelector(".product-price");
-
-            card.dataset.id = product.id;
-            img.src = "https://placehold.co/600x400/png?text=Place+holder";
-            img.alt = product.name;
-            title.textContent = product.name;
-            price.textContent = `$${product.price.toFixed(2)}`;
-
+            populateCard(clone, product);
             grid.appendChild(clone);
         });
     }
@@ -384,17 +360,41 @@ function showProductDetail(product) {
     }
 
     // --- Helpers ---
-
     function populateProductInfo(product, els) {
         els.img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=${product.name.substring(0,3).toUpperCase()}`;
         els.img.alt = product.name;
         els.title.textContent = product.name;
         els.price.textContent = `$${product.price.toFixed(2)}`;
         els.desc.textContent = product.description;
-
-        els.material.innerHTML = `<span class="font-bold text-black uppercase tracking-wide text-xs">Material:</span> ${product.material}`;
-        const colorName = product.color && product.color.length > 0 ? product.color[0].name : "N/A";
-        els.colour.innerHTML = `<span class="font-bold text-black uppercase tracking-wide text-xs">Colour:</span> ${colorName}`;
+        
+        els.material.replaceChildren();
+        const matLabel = document.createElement("span");
+        matLabel.className = "font-bold text-black uppercase tracking-wide text-xs";
+        matLabel.textContent = "Material: ";
+        els.material.appendChild(matLabel);
+        els.material.appendChild(document.createTextNode(product.material));
+        
+        els.colour.replaceChildren();
+        
+        const wrapper = document.createElement("div");
+        wrapper.className = "flex items-center gap-2";
+        
+        const colLabel = document.createElement("span");
+        colLabel.className = "font-bold text-black uppercase tracking-wide text-xs";
+        colLabel.textContent = "Colour:";
+        
+        const colValue = document.createElement("span");
+        colValue.textContent = product.color[0].name;
+        
+        const colDot = document.createElement("div");
+        colDot.className = "w-4 h-4 rounded-full border border-gray-300";
+        colDot.style.backgroundColor = product.color[0].hex;
+        
+        wrapper.appendChild(colLabel);
+        wrapper.appendChild(colValue);
+        wrapper.appendChild(colDot);
+        
+        els.colour.appendChild(wrapper);
     }
 
     function setupBreadcrumbs(product, crumbs) {
@@ -491,49 +491,54 @@ function showProductDetail(product) {
 
 
 
-    function renderRelatedProducts(product) {
-        const relatedGrid = document.querySelector("#related-grid");
-        const template = document.querySelector("#product-card-template");
-        //clear previous related items
-        relatedGrid.querySelectorAll(".product-card").forEach(c => c.remove());
+    // function renderRelatedProducts(product) {
+    //     const relatedGrid = document.querySelector("#related-grid");
+    //     const template = document.querySelector("#product-card-template");
+    //     //clear previous related items
+    //     relatedGrid.querySelectorAll(".product-card").forEach(c => c.remove());
 
-        let related = products.filter(p =>
-            p.id !== product.id &&
-            p.category === product.category
-        );
+    //     let related = products.filter(p =>
+    //         p.id !== product.id &&
+    //         p.category === product.category
+    //     );
 
-        related = related.slice(0, 4);
-        related.forEach(item => {
-            const clone = template.content.cloneNode(true);
-            const card = clone.querySelector(".product-card");
-            const img = clone.querySelector(".product-image");
-            const title = clone.querySelector(".product-title");
-            const price = clone.querySelector(".product-price");
+    //     related = related.slice(0, 4);
+    //     related.forEach(item => {
+    //         const clone = template.content.cloneNode(true);
+    //         const card = clone.querySelector(".product-card");
+    //         const img = clone.querySelector(".product-image");
+    //         const title = clone.querySelector(".product-title");
+    //         const price = clone.querySelector(".product-price");
 
-            card.dataset.id = item.id;
-            img.src = "https://placehold.co/600x400/png?text=Place+Holder";
-            img.alt = item.name;
-            title.textContent = item.name;
-            price.textContent = `$${item.price.toFixed(2)}`;
+    //         card.dataset.id = item.id;
+    //         img.src = "https://placehold.co/600x400/png?text=Place+Holder";
+    //         img.alt = item.name;
+    //         title.textContent = item.name;
+    //         price.textContent = `$${item.price.toFixed(2)}`;
 
-            relatedGrid.appendChild(clone);
-        });
-    }
+    //         relatedGrid.appendChild(clone);
+    //     });
+    // }
 
 
     // The function creates filtered products based on the gender that was chosen
-   function loadGenderProducts(genderView, products) {
-    const container = document.querySelector(`#${genderView}-products`);
-    const template = document.querySelector("#product-card-template");
-    
-    container.innerHTML = '<div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"></div>';
-    const grid = container.querySelector('div');
-    const filtered = products.filter(p => p.gender === `${genderView}s`);
-    filtered.forEach(product => {
-        const clone = template.content.cloneNode(true);
-        populateCard(clone, product);
-        grid.appendChild(clone);
-    });
+function loadGenderProducts(genderView, products) {
+        const container = document.querySelector(`#${genderView}-products`);
+        const template = document.querySelector("#product-card-template");
+        
+        container.replaceChildren();
+        
+        const grid = document.createElement("div");
+        grid.className = "grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8";
+        container.appendChild(grid);
+
+        const filtered = products.filter(p => p.gender === `${genderView}s`);
+        
+        filtered.forEach(product => {
+            const clone = template.content.cloneNode(true);
+            populateCard(clone, product);
+            grid.appendChild(clone);
+        });
     }
     //Creates a card to be displayed with the product info
     function populateCard(clone, product) {
@@ -562,6 +567,11 @@ function showProductDetail(product) {
         img.alt = product.name;
         title.textContent = product.name;
         price.textContent = `$${product.price.toFixed(2)}`;
+
+        //Color logic
+        const col = product.color[0];
+        colorName.textContent = col.name;
+        colorDot.style.backgroundColor = col.hex;
     }
 
     // Opens the drawer
@@ -756,9 +766,6 @@ function styleProductPage(titleEl, priceEl, descEl, materialEl, colourEl, btnAdd
         sizeOptions.className = "flex flex-wrap gap-2 mt-2"; 
     }
 
-});
-
-
     function showToaster(message) {
 
         const toast = document.createElement("div");
@@ -789,3 +796,8 @@ function styleProductPage(titleEl, priceEl, descEl, materialEl, colourEl, btnAdd
 
         changePage("home", products);
     });
+
+
+
+});
+
