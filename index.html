@@ -8,57 +8,43 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
 </head>
-<!--All Hero images generated with gemini ai. Home prompt:: make a hero image for a fashion store with FANCY NAME displayed in the middle-->
+
 <body>
     <header class="flex justify-between items-center bg-white text-black border-b border-gray-200 p-4">
-        <div id="logo" class="text-2xl font-black tracking-tighter p-2 cursor-pointer">
-            <button id="home-logo">FANCY NAME</button>
-        </div>
+            <div id="logo" class="text-2xl font-black tracking-tighter p-2 cursor-pointer"> FANCY NAME </div>
 
-        <nav class="flex items-center space-x-1">
-            <button id="home"
-                class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
-                Home </button>
-            <button id="women"
-                class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
-                Women </button>
-            <button id="men"
-                class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
-                Men </button>
-            <button id="browse"
-                class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
-                Browse </button>
-            <button id="about"
-                class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
-                About </button>
-        </nav>
+            <nav class="flex items-center space-x-1">
+                <button id="home" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Home </button>
+                <button id="women" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Women </button>
+                <button id="men" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Men </button>
+                <button id="browse" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> Browse </button>
+                <button id="about" class="px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100"> About </button>
+            </nav>
 
-        <div id="cart"
-            class="relative px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
-            <p>CART</p>
-            <span id="cart-count"
-                class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">0</span>
-        </div>
+            <div id="cart" class="relative px-4 py-2 rounded font-medium hover:bg-black hover:text-white transition-colors duration-100">
+                <p>CART</p>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1 rounded-full">0</span>
+            </div>
 
-    </header>
+        </header>
 
     <div id="home-view" class="">
 
         <section id="home-content" class="">
 
-            <div id="home-hero-image" class="">
+            <div id="home-hero-image" class=""> 
                 <img src="Gemini_Generated_Image_wg1o93wg1o93wg1o.png">
             </div>
 
             <section id="featured-products">
-
+                
             </section>
 
         </section>
 
     </div>
 
-   <div id="women-view" class="hidden view-section">
+    <div id="women-view" class="hidden view-section">
         <div class="relative bg-gray-100 h-[40vh] flex items-center justify-center overflow-hidden mb-12">
             <img src="Gemini_Generated_Image_1pl4bj1pl4bj1pl4 (1).png" alt="Women's Collection" class="absolute inset-0 w-full h-full object-cover opacity-90">
             <div class="relative z-10 text-center px-4">
@@ -67,7 +53,6 @@
             </div>
         </div>
 
-        <!-- Products Grid Container -->
         <section id="women-products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
             <!-- JS will inject the grid here -->
         </section>
@@ -82,7 +67,6 @@
             </div>
         </div>
 
-        <!-- Products Grid Container -->
         <section id="men-products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
             <!-- JS will inject the grid here -->
         </section>
@@ -130,14 +114,15 @@
                 <option value="loungewear">Loungewear</option>
             </select>
         </div>
+
         <div id="active-filters" class="flex flex-wrap gap-2 mb-6 empty:hidden">
             <!-- Filter chips done by JS -->
         </div>
+
         <div id="display-items-grid"
             class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <!--Will be populated using JS. Below is example struct-->
+            <!--Will be populated using JS-->
             <template id="product-card-template">
-                <!-- Main Card Container -->
                 <div class="product-card group flex flex-col gap-3 cursor-pointer" data-id="">
                     <div class="relative w-full overflow-hidden">
                         <img src="#" alt="Product" class="product-image w-full h-full object-center" />
@@ -175,7 +160,7 @@
 
 
 
-    <div id="product-view" class="hidden">
+     <div id="product-view" class="hidden">
         <nav id="product-breadcrumb" class="text-sm text-gray-500 mb-8">
             <ul class="flex items-center space-x-2">
                 <li class="hover:text-black underline">Home</button></li>
@@ -202,7 +187,7 @@
                 <div id="product-sizes">
                     <h2>Sizes:</h2>
                     <div id="size-options" class="flex flex-wrap gap-2">
-                        <!--Insert sizes with JS, example struct below-->
+                        <!--Insert sizes with JS-->
                         <template>
                             <div class="size-display-box">
                                 <div id="small">S</div>
@@ -211,7 +196,6 @@
                     </div>
                 </div>
 
-                <!-- Quantity + Add to Cart -->
                 <section id="product-purchase">
                     <label for="quantity-input">Quantity</label>
                     <input id="quantity-input" type="number" min="1" value="1" />
@@ -223,82 +207,17 @@
         <section id="related-products" class="border-t border-gray-200 pt-12">
             <h2 class="text-2xl font-bold tracking-tight mb-8 uppercase">You Might Also Like</h2>
 
-            <!-- This Grid matches the Home View Grid -->
             <div id="related-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- JS inserts related cards here -->
             </div>
         </section>
     </div>
 
-
-
-
-    <div id="cart-view" class="hidden">
-        <h1>Shopping Cart</h1>
-        <!-- Template for one cart item -->
-        <template id="cart-item">
-            <div class="cart-item" data-id="" data-size="">
-                <button class="cart-item-remove">Remove</button>
-                <span class="cart-item-name"></span>
-                <span class="cart-item-options"></span> <!-- e.g. "Size: M" -->
-                <div class="cart-item-quantity-wrapper flex items-center space-x-2">
-                    <button class="cart-item-minus px-2 py-1 bg-gray-200 rounded">−</button>
-                    <span class="cart-item-quantity">1</span>
-                    <button class="cart-item-plus px-2 py-1 bg-gray-200 rounded">+</button>
-                </div>
-                <span class="cart-item-price"></span>
-            </div>
-        </template>
-        <div id="cart-items">
-            <!-- List of "cart-item" generated by JS- -->
-        </div>
-        <p id="cart-empty-message" class="hidden">
-            Your cart is empty.
-        </p>
-        <div id="cart-shipping">
-            <h2>Shipping</h2>
-
-            <div class="shipping-methods">
-                <fieldset>
-                    <legend>Shipping Method</legend>
-                    <label>
-                        <input type="radio" id="shipping-method" value="standard" checked />Standard</label>
-
-                    <label>
-                        <input type="radio" id="shipping-method" value="express" />Express</label>
-
-                    <label>
-                        <input type="radio" id="shipping-method" value="priority" />Priority</label>
-                </fieldset>
-            </div>
-            <div class="shipping-destination">
-                <fieldset>
-                    <legend>Destination</legend>
-                    <label for="destination-select">Destination</label>
-                    <select id="destination-select">
-                        <option value="canada">Canada</option>
-                        <option value="usa">United States</option>
-                        <option value="international">International</option>
-                    </select>
-                </fieldset>
-            </div>
-        </div>
-        <div id="cart-summary">
-            <h2>Order Summary</h2>
-            <p id="cart-subtotal">Subtotal: $JS</p>
-            <p id="cart-shipping-cost">Shipping: $JS</p>
-            <p id="cart-total">Total: $JS</p>
-        </div>
-        <div id="cart-actions">
-            <button id="cart-clear">Clear Cart</button>
-            <button id="cart-checkout">Checkout</button>
-        </div>
-    </div>
-
-    <div id="about-view" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
+        <div id="about-view" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center">
         <div id="content-wrapper" class="bg-white p-8 relative border-4 border-gray-300 w-1/2 h-1/2">
             <button id="close-window" class="absolute top-1 right-2 text-black p-2 p-2 text-gray-500 hover:text-black">
-                ✕</button>
+                ✕
+            </button>
             <h1 class="text-lg font-bold p-4">About us</h2>
                 <p id="para1" class="text-[#0052A2] p-2">This single-page application was created for COMP 3612 - Web
                     Development at Mount Royal University. The goal of the project is to demonstrate practical
@@ -315,10 +234,15 @@
         </div>
     </div>
 
+        <footer class="mt-12 p-6 text-center text-gray-600 border-t">
+            <p>© 2025 FANCY STORE NAME</p>
+            <a href="github link" class="text-blue-600 underline"> GitHub Repository </a>
+        </footer>
+
     
     <template id="cart-item">
                 <div class="cart-item" data-id="" data-size="">
-                    <button class="cart-item-remove">REMOVE</button>
+                    <button class="cart-item-remove">Remove</button>
                     <span class="cart-item-name"></span>
                     <span class="cart-item-options"></span> <!-- e.g. "Size: M" -->
                     <div class="cart-item-quantity-wrapper flex items-center space-x-2">
@@ -344,16 +268,13 @@
         </button>
     </div>
 
-    <!-- Drawer Main Content -->
     <div class="flex flex-1 overflow-hidden">
-            <!-- Left Side: Totals / Shipping / Tax -->
             <div class="w-1/3 p-4 border-r overflow-y-auto space-y-4">
-                <!-- Merchandise Total -->
+                
                 <p id="drawer-merch-total" class="text-lg font-semibold">
                     Merchandise Total: $0.00
                 </p>
 
-                <!-- Shipping Choice -->
                 <div id="drawer-shipping" class="space-y-1">
                     <label for="shipping-select" class="font-medium">Shipping:</label>
                     <select id="shipping-select" class="w-full border rounded p-2">
@@ -363,7 +284,6 @@
                     </select>
                 </div>
 
-                <!-- Destination Choice -->
                 <div id="drawer-destination" class="space-y-1">
                     <label for="destination-select" class="font-medium">Destination:</label>
                     <select id="destination-select" class="w-full border rounded p-2">
@@ -373,17 +293,14 @@
                     </select>
                 </div>
 
-                <!-- Shipping Cost -->
                 <p id="drawer-shipping-cost" class="text-lg font-semibold">
                     Shipping Cost: $0.00
                 </p>
 
-                <!-- Tax -->
                 <p id="drawer-tax" class="text-lg font-semibold">
                     Tax: $0.00
                 </p>
 
-                <!-- Subtotal -->
                 <p id="drawer-subtotal" class="text-lg font-semibold">
                     Subtotal: $0.00
                 </p>
@@ -394,14 +311,8 @@
                     Checkout
                 </button>
 
-                <button 
-                    id="drawer-continue"
-                    class="w-full text-center text-sm text-gray-600 hover:text-black">
-                    Continue Shopping →
-                </button>
             </div>
 
-            <!-- Right Side: Cart Items -->
             <div id="cart-drawer-items" class="w-2/3 p-4 overflow-y-auto space-y-4">
                 <!-- JS will populate cart items here -->
             </div>

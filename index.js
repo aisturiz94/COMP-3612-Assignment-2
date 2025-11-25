@@ -40,16 +40,19 @@ document.addEventListener("DOMContentLoaded", () => {
             setNavButtonListener(products);
     });
     }
-//Close button for about us
+
+    //Close button for about us
     document.addEventListener("click", e => {
         const closeButton = document.querySelector("#close-window");
         const aboutView = document.querySelector("#about-view")
         if (e.target.id === closeButton.id) {
             aboutView.classList.toggle("hidden");
         }
-    })
+    });
+
     initBrowse(products);
     loadHomeProducts(products);
+
     //Adds an event listener to all the navigation buttons
     function setNavButtonListener(products){
         navButtons.forEach(button => {
@@ -59,15 +62,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
-        document.getElementById("logo").addEventListener("click", () => {
-            changePage("home", products);
-        });
     }
 
     //event delegation for "More Details" & "Add to Cart(not done yet" 
     document.addEventListener("click", e => {
 
-        // Check if the click is on More Details or Add to Cart
         const isDetails = e.target.classList.contains("btn-details");
         const isAdd = e.target.classList.contains("btn-add");
 
@@ -78,10 +77,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!card) {
             return;
         }
-        // Get the product ID from the card
         const id = card.dataset.id;
         const product = products.find(p => String(p.id) === String(id));
-        // --- Handle each button type ---
+        
         if (isDetails) {
             showProductDetail(product);
         }
@@ -90,9 +88,6 @@ document.addEventListener("DOMContentLoaded", () => {
             addToCart(product, cartItems);
         }
     });
-
-
-
 
 function loadHomeProducts(products) {
         const homeSection = document.querySelector("#featured-products");
@@ -108,9 +103,9 @@ function loadHomeProducts(products) {
 
         // Loop and Append
         featured.forEach(product => {
-            // Clone the template content
+
             const clone = template.content.cloneNode(true);
-            // Populate Data
+
             const card = clone.querySelector(".product-card");
             const img = clone.querySelector(".product-image");
             const title = clone.querySelector(".product-title");
@@ -118,23 +113,20 @@ function loadHomeProducts(products) {
             
             card.dataset.id = product.id;
 
-            // Set Content
             img.src = "https://placehold.co/600x400/png?text=Place+Holder";
             img.alt = product.name;
             title.textContent = product.name;
             price.textContent = `$${product.price.toFixed(2)}`;
 
-            // Append the populated clone to the grid container
             gridContainer.appendChild(clone);
         });
 
-        // 7. Finally, add the grid to the page
         homeSection.appendChild(gridContainer);
     }
-//initializes all elements in the browse view so we can do stuff to it
-//input: array of prodcuts from the JSON
-function initBrowse(products) {
-    /* cache DOM elements */
+    //initializes all elements in the browse view so we can do stuff to it
+    //input: array of prodcuts from the JSON
+    function initBrowse(products) {
+
     const searchInput = document.querySelector("#product-search");
     const sortSelect = document.querySelector("#sort-select");
     const genderSelect = document.querySelector("#filter-gender");
@@ -143,7 +135,6 @@ function initBrowse(products) {
     const grid = document.querySelector("#display-items-grid");
     const activeFiltersContainer = document.querySelector("#active-filters");
 
-    /* filter state */
     let filters = {
         search: "",
         gender: "",
@@ -151,8 +142,8 @@ function initBrowse(products) {
         sort: "name-asc"
     };
 
-    //Applies filters
-    function applyFilters() {
+        //Applies filters
+        function applyFilters() {
             let result = products.slice();
 
             if (filters.gender) {
@@ -182,21 +173,21 @@ function initBrowse(products) {
                 result.sort((a, b) => b.price - a.price);
             }
 
-        renderBrowseGrid(result);
-        renderActiveFilters();
-    }
-    function renderActiveFilters() {
+            renderBrowseGrid(result);
+            renderActiveFilters();
+        }
+
+        function renderActiveFilters() {
             if (!activeFiltersContainer) return;
             activeFiltersContainer.innerHTML = "";
 
-            // Helper to create a chip
             const createChip = (label, type) => {
                 const btn = document.createElement("button");
                 btn.className = "flex items-center gap-2 px-3 py-1 bg-gray-100 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-gray-200 transition-colors";
                 btn.innerHTML = `<span>${label}</span><span class="text-gray-500 hover:text-red-500">✕</span>`;
                 
                 btn.onclick = () => {
-                    // Logic to remove specific filter
+
                     if (type === "search") {
                         filters.search = "";
                         searchInput.value = "";
@@ -211,7 +202,7 @@ function initBrowse(products) {
                 };
                 activeFiltersContainer.appendChild(btn);
             };
-            // Check each filter and create chip if active
+
             if (filters.search) {
                 createChip(`Search: "${filters.search}"`, "search");
             }
@@ -222,11 +213,12 @@ function initBrowse(products) {
                 createChip(`Category: ${filters.category}`, "category");
             }
         }
-    //Sort and apply filter
-    searchInput.addEventListener("input", () => {
-        filters.search = searchInput.value.trim();
-        applyFilters();
-    });
+
+        //Sort and apply filter
+        searchInput.addEventListener("input", () => {
+            filters.search = searchInput.value.trim();
+            applyFilters();
+        });
 
         genderSelect.addEventListener("change", () => {
             filters.gender = genderSelect.value; 
@@ -262,7 +254,6 @@ function initBrowse(products) {
         const grid = document.querySelector("#display-items-grid");
         const template = document.querySelector("#product-card-template");
 
-        /* remove old product cards */
         grid.querySelectorAll(".product-card").forEach(c => c.remove());
 
         list.forEach(product => {
@@ -313,31 +304,23 @@ function initBrowse(products) {
     // Changes the web page being displayed by hiding
     // all of them and setting the selected page visible.
     function changePage(viewId, products) {
-        const views = ["home-view", "women-view", "men-view", "browse-view", "product-view", "cart-view"];
-       
-        if (viewId == "women" || viewId == "men") {
-            loadGenderProducts(viewId, products);
-        }
+            const views = ["home-view", "women-view", "men-view" ,"browse-view", "product-view","about-view"];
 
-        if (viewId == "about") {
-            const aboutView = document.getElementById("about-view");
-            aboutView.classList.remove("hidden");
-            return;
-        }
+            if (viewId == "women" || viewId == "men"){
+                loadGenderProducts(viewId, products);
+            }
+            views.forEach(view => {
+                document.getElementById(view).classList.add("hidden");
+                disableButtonListener(viewId);
+            });
 
-        // 3. Normal Page Switching
-        views.forEach(view => {
-            document.getElementById(view).classList.add("hidden");
-            disableButtonListener(viewId);
-        });
-
-        document.getElementById(`${viewId}-view`).classList.remove("hidden");
-        activateButtonListener(viewId);
+            document.getElementById(`${viewId}-view`).classList.remove("hidden");
+            activateButtonListener(viewId);
     }
-    
 
-function showProductDetail(product) {
-        // 1. Cache DOM Elements
+    //shows product details when clicking "More details"
+    function showProductDetail(product) {
+
         const elements = {
             img: document.querySelector("#product-image"),
             title: document.querySelector("#product-title"),
@@ -361,29 +344,22 @@ function showProductDetail(product) {
 
         elements.detailArticle.dataset.id = product.id;
 
-        // 2. Apply Styles (Safe call)
         styleProductPage(elements.title, elements.price, elements.desc, elements.material, elements.colour, elements.btnAdd, elements.sizeOptions);
 
-        // 3. Populate Content
         populateProductInfo(product, elements);
 
-        // 4. Setup Breadcrumbs
         setupBreadcrumbs(product, elements.crumbs);
 
-        // 5. Setup Size Buttons
         setupSizeButtons(product, elements.sizeOptions);
 
-        // 6. Setup Quantity Controls
         setupQuantityControls(elements.qtyInput, elements.qtyMinus, elements.qtyPlus);
 
-        // 7. Setup Add to Cart Button
         setupAddToCartButton(product, elements.btnAdd, elements.qtyInput);
 
         renderRelatedProducts(product);
         changePage("product", products);
     }
 
-    // --- Helpers ---
 
     function populateProductInfo(product, els) {
         els.img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=${product.name.substring(0,3).toUpperCase()}`;
@@ -476,24 +452,6 @@ function showProductDetail(product) {
     function renderRelatedProducts(product) {
         const relatedGrid = document.querySelector("#related-grid");
         const template = document.querySelector("#product-card-template");
-        if (!relatedGrid || !template) return;
-        
-        relatedGrid.innerHTML = "";
-        let related = products.filter(p => p.id !== product.id && p.category === product.category).slice(0, 4);
-
-        related.forEach(item => {
-            const clone = template.content.cloneNode(true);
-            populateCard(clone, item);
-            relatedGrid.appendChild(clone);
-        });
-    }
-
-
-
-
-    function renderRelatedProducts(product) {
-        const relatedGrid = document.querySelector("#related-grid");
-        const template = document.querySelector("#product-card-template");
         //clear previous related items
         relatedGrid.querySelectorAll(".product-card").forEach(c => c.remove());
 
@@ -523,18 +481,19 @@ function showProductDetail(product) {
 
     // The function creates filtered products based on the gender that was chosen
    function loadGenderProducts(genderView, products) {
-    const container = document.querySelector(`#${genderView}-products`);
-    const template = document.querySelector("#product-card-template");
-    
-    container.innerHTML = '<div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"></div>';
-    const grid = container.querySelector('div');
-    const filtered = products.filter(p => p.gender === `${genderView}s`);
-    filtered.forEach(product => {
-        const clone = template.content.cloneNode(true);
-        populateCard(clone, product);
-        grid.appendChild(clone);
-    });
+        const container = document.querySelector(`#${genderView}-products`);
+        const template = document.querySelector("#product-card-template");
+        
+        container.innerHTML = '<div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"></div>';
+        const grid = container.querySelector('div');
+        const filtered = products.filter(p => p.gender === `${genderView}s`);
+        filtered.forEach(product => {
+            const clone = template.content.cloneNode(true);
+            populateCard(clone, product);
+            grid.appendChild(clone);
+        });
     }
+
     //Creates a card to be displayed with the product info
     function populateCard(clone, product) {
         const card = clone.querySelector(".product-card");
@@ -544,20 +503,16 @@ function showProductDetail(product) {
         const addBtn = clone.querySelector(".btn-add");
         const detailBtn = clone.querySelector(".btn-details");
         
-        // NEW: Select the color elements
         const colorDot = clone.querySelector(".product-color-dot");
         const colorName = clone.querySelector(".product-color-name");
 
-        // Set IDs
         card.dataset.id = product.id;
         addBtn.dataset.productId = product.id;
         
-        // Also set ID on details button for your listener
         if (detailBtn){
             detailBtn.dataset.productId = product.id; 
         }
 
-        // Set Content
         img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=PLace+Holder`;
         img.alt = product.name;
         title.textContent = product.name;
@@ -576,11 +531,9 @@ function showProductDetail(product) {
         drawerOverlay.classList.add("opacity-0", "pointer-events-none");
     }
 
-    // Clicking overlay closes drawer
     drawerOverlay.addEventListener("click", closeCartDrawer);
     drawerCloseBtn.addEventListener("click", closeCartDrawer);
 
-    // Cart icon opens drawer
     document.querySelector("#cart").addEventListener("click", () => {
         updateCartDrawer();  
         openCartDrawer();
@@ -739,25 +692,6 @@ function showProductDetail(product) {
         updateCartIconNum();
     }
 
-function styleProductPage(titleEl, priceEl, descEl, materialEl, colourEl, btnAdd, sizeOptions) {
-        // Title & Price
-        titleEl.className = "text-3xl lg:text-4xl font-black tracking-tighter uppercase mb-2";
-        priceEl.className = "text-xl font-bold text-gray-900 mb-4";
-
-        // Description & Details
-        descEl.className = "text-gray-600 leading-relaxed mb-4";
-        materialEl.className = "text-sm text-gray-600";
-        colourEl.className = "text-sm text-gray-600";
-
-        // Add to Cart Button
-        btnAdd.className = "flex-1 bg-black text-white py-3 px-6 uppercase font-bold tracking-widest hover:bg-gray-800 transition-colors h-full"; 
-        
-        // Size Options Container
-        sizeOptions.className = "flex flex-wrap gap-2 mt-2"; 
-    }
-
-});
-
 
     function showToaster(message) {
 
@@ -789,3 +723,5 @@ function styleProductPage(titleEl, priceEl, descEl, materialEl, colourEl, btnAdd
 
         changePage("home", products);
     });
+    // Need to implement the size chose display and the color chosen display in the cart
+});
