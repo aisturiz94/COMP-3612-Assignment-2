@@ -2,7 +2,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const url =  "https://gist.githubusercontent.com/rconnolly/d37a491b50203d66d043c26f33dbd798/raw/37b5b68c527ddbe824eaed12073d266d5455432a/clothing-compact.json";
 
-
+   /**
+     * Function: Cart
+     * Description: Constructor function for creating a Cart item object.
+     * Input: id (number/string), name (string), option (string), price (int), quantity (int)
+     * Output: A new Cart object instance
+     */
     function Cart(id, name, option, price, quantity) {
         this.id = id;
         this.name = name;
@@ -52,8 +57,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     initBrowse(products);
     loadHomeProducts(products);
-
-    //Adds an event listener to all the navigation buttons
+    /**
+     * Function: setNavButtonListener
+     * Description: Attaches click event listeners to main navigation buttons.
+     * Input: products (Array of objects)
+     * Output: None
+     */
     function setNavButtonListener(products){
         navButtons.forEach(button => {
             button.addEventListener("click", (e) => {
@@ -89,44 +98,47 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+
+
+    /**
+     * Function: loadHomeProducts
+     * Description: Selects random products to display on the home page 'Featured Items' section.
+     * Input: products (Array of objects)
+     * Output: DOM manipulation (appends product cards to home section)
+     */
 function loadHomeProducts(products) {
         const homeSection = document.querySelector("#featured-products");
-        const gridContainer = document.createElement("div");
+        homeSection.replaceChildren();
         
+        const h2 = document.createElement("h2");
+        h2.className = "text-3xl font-bold mb-8 text-center";
+        h2.textContent = "Featured Items";
+        homeSection.appendChild(h2);
+        
+        const gridContainer = document.createElement("div");
         gridContainer.id = "home-grid";
-        gridContainer.className = "grid grid-cols-1 md:grid-cols-4 gap-4"; 
+        gridContainer.className = "grid grid-cols-1 md:grid-cols-4 gap-4";
         const template = document.querySelector("#product-card-template");
 
-        //Pick 4 random products
-        const shuffled = products.sort(() => 0.5 - Math.random());
+        const shuffled = [...products].sort(() => 0.5 - Math.random());
         const featured = shuffled.slice(0, 4);
 
-        // Loop and Append
         featured.forEach(product => {
-
             const clone = template.content.cloneNode(true);
-
-            const card = clone.querySelector(".product-card");
-            const img = clone.querySelector(".product-image");
-            const title = clone.querySelector(".product-title");
-            const price = clone.querySelector(".product-price");
-            
-            card.dataset.id = product.id;
-
-            img.src = "https://placehold.co/600x400/png?text=Place+Holder";
-            img.alt = product.name;
-            title.textContent = product.name;
-            price.textContent = `$${product.price.toFixed(2)}`;
-
+            populateCard(clone, product); 
             gridContainer.appendChild(clone);
         });
 
         homeSection.appendChild(gridContainer);
     }
-    //initializes all elements in the browse view so we can do stuff to it
-    //input: array of prodcuts from the JSON
-    function initBrowse(products) {
-
+    /**
+     * Function: initBrowse
+     * Description: Sets up the Browse/Search view, including filters, sorting, and event listeners for the filter inputs.
+     * Input: products (Array of objects)
+     * Output: None (Sets up internal state and renders initial grid)
+     */
+function initBrowse(products) {
+    /* cache DOM elements */
     const searchInput = document.querySelector("#product-search");
     const sortSelect = document.querySelector("#sort-select");
     const genderSelect = document.querySelector("#filter-gender");
@@ -142,8 +154,13 @@ function loadHomeProducts(products) {
         sort: "name-asc"
     };
 
-        //Applies filters
-        function applyFilters() {
+    /**
+     * Function: applyFilters
+     * Description: Applies filters to sort products array .
+     * Input: None
+     * Output: None
+     */
+    function applyFilters() {
             let result = products.slice();
 
             if (filters.gender) {
@@ -249,7 +266,12 @@ function loadHomeProducts(products) {
     }
 
 
-    //Renders the grid for the browse view
+    /**
+     * Function: renderBrowseGrid
+     * Description: Renders the product grid for the Browse page based on the filtered list.
+     * Input: list (Array of product objects)
+     * Output: DOM manipulation (updates grid content)
+     */
     function renderBrowseGrid(list) {
         const grid = document.querySelector("#display-items-grid");
         const template = document.querySelector("#product-card-template");
@@ -258,23 +280,17 @@ function loadHomeProducts(products) {
 
         list.forEach(product => {
             const clone = template.content.cloneNode(true);
-
-            const card = clone.querySelector(".product-card");
-            const img = clone.querySelector(".product-image");
-            const title = clone.querySelector(".product-title");
-            const price = clone.querySelector(".product-price");
-
-            card.dataset.id = product.id;
-            img.src = "https://placehold.co/600x400/png?text=Place+holder";
-            img.alt = product.name;
-            title.textContent = product.name;
-            price.textContent = `$${product.price.toFixed(2)}`;
-
+            populateCard(clone, product);
             grid.appendChild(clone);
         });
     }
 
-    //Activates a page's buttons event listener
+    /**
+     * Function: activateButtonListener
+     * Description: Enables all buttons within a specific view container.
+     * Input: viewId (string - id prefix of the view)
+     * Output: None (DOM attributes updated)
+     */
     function activateButtonListener(viewId) {
         let pageButtons = document.querySelectorAll(`#${viewId}-view button`);
         pageButtons.forEach(button => {
@@ -282,7 +298,12 @@ function loadHomeProducts(products) {
         })
     }
 
-    //Disables a page's buttons event listener
+    /**
+     * Function: disableButtonListener
+     * Description: Disables all buttons within a specific view container to prevent interaction while hidden.
+     * Input: viewId (string - id prefix of the view)
+     * Output: None (DOM attributes updated)
+     */
     function disableButtonListener(viewId) {
         let pageButtons = document.querySelectorAll(`#${viewId}-view button`);
         pageButtons.forEach(button => {
@@ -290,7 +311,12 @@ function loadHomeProducts(products) {
         })
     }
 
-    // Verifies if a page button was clicked
+    /**
+     * Function: pageButtonClicked
+     * Description: Checks if a clicked ID corresponds to a valid page navigation button.
+     * Input: buttonId (string)
+     * Output: Boolean (true if valid page, false otherwise)
+     */
     function pageButtonClicked(buttonId) {
         const navIds = ["home", "women", "men", "browse", "about"];
         let answer = false;
@@ -301,8 +327,12 @@ function loadHomeProducts(products) {
         return answer;
     }
 
-    // Changes the web page being displayed by hiding
-    // all of them and setting the selected page visible.
+    /**
+     * Function: changePage
+     * Description: Handles hiding all views and showing the requested one.
+     * Input: viewId (string), products (Array of objects)
+     * Output: None (DOM classes updated)
+     */
     function changePage(viewId, products) {
             const views = ["home-view", "women-view", "men-view" ,"browse-view", "product-view","about-view"];
 
@@ -317,10 +347,15 @@ function loadHomeProducts(products) {
             document.getElementById(`${viewId}-view`).classList.remove("hidden");
             activateButtonListener(viewId);
     }
-
-    //shows product details when clicking "More details"
-    function showProductDetail(product) {
-
+    
+    /**
+     * Function: showProductDetail
+     * Description: Orchestrates the loading of the Product Detail view for a specific item.
+     * Input: product (Object)
+     * Output: None (DOM updates and page change)
+     */
+function showProductDetail(product) {
+        // 1. Cache DOM Elements
         const elements = {
             img: document.querySelector("#product-image"),
             title: document.querySelector("#product-title"),
@@ -360,19 +395,54 @@ function loadHomeProducts(products) {
         changePage("product", products);
     }
 
-
+    /**
+     * Function: populateProductInfo
+     * Description: Fills the product detail elements (Image, Title, Desc, Material, Color) with data.
+     * Input: product (Object), els (Object containing DOM elements)
+     * Output: None (DOM content updated)
+     */
     function populateProductInfo(product, els) {
         els.img.src = `https://placehold.co/600x800/F3F4F6/9CA3AF?text=${product.name.substring(0,3).toUpperCase()}`;
         els.img.alt = product.name;
         els.title.textContent = product.name;
         els.price.textContent = `$${product.price.toFixed(2)}`;
         els.desc.textContent = product.description;
-
-        els.material.innerHTML = `<span class="font-bold text-black uppercase tracking-wide text-xs">Material:</span> ${product.material}`;
-        const colorName = product.color && product.color.length > 0 ? product.color[0].name : "N/A";
-        els.colour.innerHTML = `<span class="font-bold text-black uppercase tracking-wide text-xs">Colour:</span> ${colorName}`;
+        
+        els.material.replaceChildren();
+        const matLabel = document.createElement("span");
+        matLabel.className = "font-bold text-black uppercase tracking-wide text-xs";
+        matLabel.textContent = "Material: ";
+        els.material.appendChild(matLabel);
+        els.material.appendChild(document.createTextNode(product.material));
+        
+        els.colour.replaceChildren();
+        
+        const wrapper = document.createElement("div");
+        wrapper.className = "flex items-center gap-2";
+        
+        const colLabel = document.createElement("span");
+        colLabel.className = "font-bold text-black uppercase tracking-wide text-xs";
+        colLabel.textContent = "Colour:";
+        
+        const colValue = document.createElement("span");
+        colValue.textContent = product.color[0].name;
+        
+        const colDot = document.createElement("div");
+        colDot.className = "w-4 h-4 rounded-full border border-gray-300";
+        colDot.style.backgroundColor = product.color[0].hex;
+        
+        wrapper.appendChild(colLabel);
+        wrapper.appendChild(colValue);
+        wrapper.appendChild(colDot);
+        
+        els.colour.appendChild(wrapper);
     }
-
+    /**
+     * Function: setupBreadcrumbs
+     * Description: Configures the breadcrumb navigation links on the Product Detail page.
+     * Input: product (Object), crumbs (Object containing breadcrumb DOM elements)
+     * Output: None (Event listeners attached)
+     */
     function setupBreadcrumbs(product, crumbs) {
         if (crumbs.home) crumbs.home.onclick = () => changePage("home", products);
 
@@ -393,7 +463,12 @@ function loadHomeProducts(products) {
         }
         if (crumbs.product) crumbs.product.textContent = product.name;
     }
-
+    /**
+     * Function: setupSizeButtons
+     * Description: Generates interactive size buttons.
+     * Input: product (Object), container (DOM Element)
+     * Output: None (Buttons appended to container)
+     */
     function setupSizeButtons(product, container) {
         if (!container) return;
         container.innerHTML = "";
@@ -417,7 +492,12 @@ function loadHomeProducts(products) {
             });
         }
     }
-
+    /**
+     * Function: setupQuantityControls
+     * Description: Initializes the quantity input field.
+     * Input: input (DOM Input Element)
+     * Output: None
+     */
     function setupQuantityControls(input, minusBtn, plusBtn) {
         if (input) input.value = 1;
         if (minusBtn) {
@@ -437,7 +517,12 @@ function loadHomeProducts(products) {
             };
         }
     }
-
+    /**
+     * Function: setupAddToCartButton
+     * Description: Configures the main 'Add to Cart' button with current product and quantity logic.
+     * Input: product (Object), btn (DOM Button Element), input (DOM Input Element for quantity)
+     * Output: None (Event listener attached)
+     */
     function setupAddToCartButton(product, btn, input) {
         if (!btn) return;
         const newBtnAdd = btn.cloneNode(true);
@@ -448,53 +533,57 @@ function loadHomeProducts(products) {
             alert(`Added ${qty} x ${product.name} to cart.`);
         };
     }
-
+    /**
+     * Function: renderRelatedProducts
+     * Description: Finds and displays up to 4 other products in the same category.
+     * Input: product (Object - the current product to exclude)
+     * Output: DOM manipulation (Related grid updated)
+     */
     function renderRelatedProducts(product) {
         const relatedGrid = document.querySelector("#related-grid");
         const template = document.querySelector("#product-card-template");
-        //clear previous related items
-        relatedGrid.querySelectorAll(".product-card").forEach(c => c.remove());
+        if (!relatedGrid || !template) return;
+        
+        relatedGrid.innerHTML = "";
+        let related = products.filter(p => p.id !== product.id && p.category === product.category).slice(0, 4);
 
-        let related = products.filter(p =>
-            p.id !== product.id &&
-            p.category === product.category
-        );
-
-        related = related.slice(0, 4);
         related.forEach(item => {
             const clone = template.content.cloneNode(true);
-            const card = clone.querySelector(".product-card");
-            const img = clone.querySelector(".product-image");
-            const title = clone.querySelector(".product-title");
-            const price = clone.querySelector(".product-price");
-
-            card.dataset.id = item.id;
-            img.src = "https://placehold.co/600x400/png?text=Place+Holder";
-            img.alt = item.name;
-            title.textContent = item.name;
-            price.textContent = `$${item.price.toFixed(2)}`;
-
+            populateCard(clone, item);
             relatedGrid.appendChild(clone);
         });
     }
 
-
-    // The function creates filtered products based on the gender that was chosen
-   function loadGenderProducts(genderView, products) {
+    /**
+     * Function: loadGenderProducts
+     * Description: Renders the product grid for gender-specific views (Men/Women).
+     * Input: genderView (string - 'men' or 'women'), products (Array of objects)
+     * Output: DOM manipulation (Grid updated)
+     */
+function loadGenderProducts(genderView, products) {
         const container = document.querySelector(`#${genderView}-products`);
         const template = document.querySelector("#product-card-template");
         
-        container.innerHTML = '<div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"></div>';
-        const grid = container.querySelector('div');
+        container.replaceChildren();
+        
+        const grid = document.createElement("div");
+        grid.className = "grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8";
+        container.appendChild(grid);
+
         const filtered = products.filter(p => p.gender === `${genderView}s`);
+        
         filtered.forEach(product => {
             const clone = template.content.cloneNode(true);
             populateCard(clone, product);
             grid.appendChild(clone);
         });
     }
-
-    //Creates a card to be displayed with the product info
+    /**
+     * Function: populateCard
+     * Description: Helper function to fill a product card template with data. Used across Home, Browse, and Related sections.
+     * Input: clone (DocumentFragment/Node), product (Object)
+     * Output: None (DOM elements inside clone are updated)
+     */
     function populateCard(clone, product) {
         const card = clone.querySelector(".product-card");
         const img = clone.querySelector(".product-image");
@@ -517,15 +606,30 @@ function loadHomeProducts(products) {
         img.alt = product.name;
         title.textContent = product.name;
         price.textContent = `$${product.price.toFixed(2)}`;
+
+        //Color logic
+        const col = product.color[0];
+        colorName.textContent = col.name;
+        colorDot.style.backgroundColor = col.hex;
     }
 
-    // Opens the drawer
+    /**
+     * Function: openCartDrawer
+     * Description: Slides the cart drawer into view.
+     * Input: None
+     * Output: DOM class updates (removes transform translate)
+     */
     function openCartDrawer() {
         drawer.classList.remove("translate-x-full");
         drawerOverlay.classList.remove("opacity-0", "pointer-events-none");
     }
 
-    // Closes the drawer
+    /**
+     * Function: closeCartDrawer
+     * Description: Slides the cart drawer out of view.
+     * Input: None
+     * Output: DOM class updates (adds transform translate)
+     */
     function closeCartDrawer() {
         drawer.classList.add("translate-x-full");
         drawerOverlay.classList.add("opacity-0", "pointer-events-none");
@@ -539,7 +643,12 @@ function loadHomeProducts(products) {
         openCartDrawer();
     });
 
-    // Updates the cart drawer display
+    /**
+     * Function: updateCartDrawer
+     * Description: Re-renders the entire cart drawer, including item list, totals, shipping logic, and tax calculations.
+     * Input: None (Uses global cartItems)
+     * Output: DOM manipulation (Cart drawer content updated)
+     */
     function updateCartDrawer() {
         const drawerList = document.querySelector("#cart-drawer-items");
         const template = document.querySelector("#cart-item");
@@ -630,7 +739,12 @@ function loadHomeProducts(products) {
     document.querySelector("#shipping-select").addEventListener("change", updateCartDrawer);
     document.querySelector("#destination-select").addEventListener("change", updateCartDrawer);
 
-    // Adds an item to the cart
+    /**
+     * Function: addToCart
+     * Description: Adds a product to the global cart state, or increments quantity if it already exists.
+     * Input: product (Object), cartItems (Array)
+     * Output: None (State updated)
+     */
     function addToCart(product, cartItems) {
 
         const id = product.id;
@@ -651,14 +765,24 @@ function loadHomeProducts(products) {
         saveCart();
     }
 
-    // Removes an item from the cart
+    /**
+     * Function: removeFromCart
+     * Description: Completely removes a specific item (id + option) from the cart.
+     * Input: id (number/string), option (string)
+     * Output: None (State updated)
+     */
     function removeFromCart(id, option) {
         cartItems = cartItems.filter(item => !(item.id == id && item.option == option));
         updateCartIconNum();
         updateCartDrawer();
         saveCart();
     }
-
+    /**
+     * Function: updateCartIconNum
+     * Description: Updates the red badge on the cart icon with the total quantity of items.
+     * Input: None
+     * Output: DOM text update
+     */
     function updateCartIconNum() { 
         let totalQty = 0; 
         for (let item of cartItems) { 
@@ -666,11 +790,21 @@ function loadHomeProducts(products) {
         } 
         document.querySelector("#cart-count").textContent = totalQty; 
     }
-
+    /**
+     * Function: saveCart
+     * Description: Persists the current cart state to localStorage.
+     * Input: None
+     * Output: None (Side effect: writes to localStorage)
+     */
     function saveCart() {
     localStorage.setItem("cart", JSON.stringify(cartItems));
     }
-
+    /**
+     * Function: decreaseCartItem
+     * Description: Decrements item quantity, or removes it if quantity reaches 0.
+     * Input: item (Cart object)
+     * Output: None
+     */
     function decreaseCartItem(item) {
         if (item.quantity > 1) {
             item.quantity--;
@@ -683,7 +817,12 @@ function loadHomeProducts(products) {
         updateCartDrawer();
         updateCartIconNum();
     }
-
+    /**
+     * Function: increaseCartItem
+     * Description: Increments item quantity by 1.
+     * Input: item (Cart object)
+     * Output: None
+     */
     function increaseCartItem(item) {
         item.quantity++;
 
@@ -691,8 +830,34 @@ function loadHomeProducts(products) {
         updateCartDrawer();
         updateCartIconNum();
     }
+    /**
+     * Function: styleProductPage
+     * Description: Applies Tailwind CSS classes dynamically to the product detail page elements.
+     * Input: titleEl, priceEl, descEl, materialEl, colourEl, btnAdd, sizeOptions (DOM Elements)
+     * Output: None (DOM classes updated)
+     */
+function styleProductPage(titleEl, priceEl, descEl, materialEl, colourEl, btnAdd, sizeOptions) {
+        // Title & Price
+        titleEl.className = "text-3xl lg:text-4xl font-black tracking-tighter uppercase mb-2";
+        priceEl.className = "text-xl font-bold text-gray-900 mb-4";
 
+        // Description & Details
+        descEl.className = "text-gray-600 leading-relaxed mb-4";
+        materialEl.className = "text-sm text-gray-600";
+        colourEl.className = "text-sm text-gray-600";
 
+        // Add to Cart Button
+        btnAdd.className = "flex-1 bg-black text-white py-3 px-6 uppercase font-bold tracking-widest hover:bg-gray-800 transition-colors h-full"; 
+        
+        // Size Options Container
+        sizeOptions.className = "flex flex-wrap gap-2 mt-2"; 
+    }
+    /**
+     * Function: showToaster
+     * Description: Creates and displays a temporary notification message at the bottom of the screen.
+     * Input: message (string)
+     * Output: None (DOM manipulation: append temporary div)
+     */
     function showToaster(message) {
 
         const toast = document.createElement("div");
@@ -723,5 +888,8 @@ function loadHomeProducts(products) {
 
         changePage("home", products);
     });
-    // Need to implement the size chose display and the color chosen display in the cart
+
+
+
 });
+
