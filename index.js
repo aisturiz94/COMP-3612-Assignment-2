@@ -8,12 +8,13 @@ document.addEventListener("DOMContentLoaded", () => {
      * Input: id (number/string), name (string), option (string), price (int), quantity (int)
      * Output: A new Cart object instance
      */
-    function Cart(id, name, option, price, quantity) {
+    function Cart(id, name, option, price, quantity, color) {
         this.id = id;
         this.name = name;
         this.option = option;
         this.price = price;
         this.quantity = quantity;
+        this.color = color;
     }
     const navButtons = document.querySelectorAll("nav button");
     const cartButton = document.querySelector('#cart');
@@ -29,21 +30,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedData = localStorage.getItem("products");
 
     if (savedData) {
-        products = JSON.parse(savedData);
+        parsedProducts = JSON.parse(savedData);
 
-        setNavButtonListener(products);
-    }
-
-    else{
+        if (Array.isArray(parsedProducts)) {
+            products = parsedProducts;
+            setNavButtonListener(products);
+            initBrowse(products);
+            loadHomeProducts(products);
+        }
+    } else {
         console.log("before");
         fetch(url)
-            .then(resp => resp.json())
-            .then(data => {
-            localStorage.setItem("products", JSON.stringify(data));
-            products = data;
-
-            setNavButtonListener(products);
-    });
+        .then(resp => {
+            if (!resp.ok) {
+                console.error("Failed to fetch products. Status:", resp.status);
+                return [];
+            }
+            return resp.json();
+        })
+        .then(data => {
+            if (Array.isArray(data)) {
+                localStorage.setItem("products", JSON.stringify(data));
+                products = data;
+                setNavButtonListener(products);
+                initBrowse(products);
+                loadHomeProducts(products);
+            } else {
+                console.error("Fetched products data is not an array.");
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching products:", err);
+        });
     }
 
     //Close button for about us
@@ -55,8 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    initBrowse(products);
-    loadHomeProducts(products);
     /**
      * Function: setNavButtonListener
      * Description: Attaches click event listeners to main navigation buttons.
@@ -70,6 +86,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     changePage(e.target.id, products);
                 }
             });
+        });
+        document.getElementById("logo").addEventListener("click", () => {
+            changePage("home", products);
         });
     }
 
@@ -144,7 +163,6 @@ function initBrowse(products) {
     const genderSelect = document.querySelector("#filter-gender");
     const categorySelect = document.querySelector("#filter-category");
     const clearBtn = document.querySelector("#clear-filters");
-    const grid = document.querySelector("#display-items-grid");
     const activeFiltersContainer = document.querySelector("#active-filters");
 
     let filters = {
@@ -472,25 +490,36 @@ function showProductDetail(product) {
     function setupSizeButtons(product, container) {
         if (!container) return;
         container.innerHTML = "";
-        if (product.sizes && product.sizes.length) {
-            product.sizes.forEach((size, index) => {
-                const btn = document.createElement("button");
-                btn.type = "button";
-                btn.textContent = size;
-                btn.className = `w-10 h-10 border border-gray-300 text-sm font-medium flex items-center justify-center transition-colors hover:border-black`;
-                if (index === 0) btn.classList.add("bg-black", "text-white", "border-black");
 
-                btn.onclick = () => {
-                    Array.from(container.children).forEach(b => {
-                        b.classList.remove("bg-black", "text-white", "border-black");
-                        b.classList.add("border-gray-300");
-                    });
-                    btn.classList.remove("border-gray-300");
-                    btn.classList.add("bg-black", "text-white", "border-black");
-                };
-                container.appendChild(btn);
-            });
-        }
+        let selectedSize = product.sizes[0];
+
+        product.sizes.forEach((size, index) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.textContent = size;
+
+            btn.className =
+                "size-btn w-10 h-10 border border-gray-300 text-sm font-medium flex items-center justify-center transition-colors hover:border-black rounded";
+
+            if (index === 0) {
+                btn.classList.add("bg-black", "text-white", "border-black");
+                container.dataset.selectedSize = size; 
+            }
+
+            btn.onclick = () => {
+                container.dataset.selectedSize = size;
+
+                Array.from(container.children).forEach(b => {
+                    b.classList.remove("bg-black", "text-white", "border-black");
+                    b.classList.add("border-gray-300");
+                });
+
+                btn.classList.remove("border-gray-300");
+                btn.classList.add("bg-black", "text-white", "border-black");
+            };
+
+            container.appendChild(btn);
+        });
     }
     /**
      * Function: setupQuantityControls
@@ -638,7 +667,7 @@ function loadGenderProducts(genderView, products) {
     drawerOverlay.addEventListener("click", closeCartDrawer);
     drawerCloseBtn.addEventListener("click", closeCartDrawer);
 
-    document.querySelector("#cart").addEventListener("click", () => {
+    cartButton.addEventListener("click", () => {
         updateCartDrawer();  
         openCartDrawer();
     });
@@ -661,7 +690,9 @@ function loadGenderProducts(genderView, products) {
 
         let subtotal = 0;
         let totalQty = 0;
-        for (let item of cartItems) totalQty += item.quantity;
+        for (let item of cartItems) { 
+            totalQty += item.quantity
+        };
 
         cartItems.forEach(item => {
             const clone = template.content.cloneNode(true);
@@ -679,10 +710,19 @@ function loadGenderProducts(genderView, products) {
             div.dataset.size = item.option;
 
             name.textContent = item.name;
-            options.textContent = `Size: ${item.option}`;
             qtyContainer.textContent = item.quantity;
             price.textContent = `$${(item.price * item.quantity).toFixed(2)}`;
             subtotal += item.price * item.quantity;
+
+            options.textContent = ``;
+            const sizeLabel = document.createElement("div");
+            const colorLabel = document.createElement("div");
+
+            sizeLabel.textContent = `Size: ${item.option || "N/A"}`;
+            colorLabel.textContent = `Colour: ${item.color?.name || "N/A"}`;
+
+            options.appendChild(sizeLabel);
+            options.appendChild(colorLabel);
 
             minusBtn.addEventListener("click", () => decreaseCartItem(item));
             plusBtn.addEventListener("click", () => increaseCartItem(item));
@@ -750,14 +790,19 @@ function loadGenderProducts(genderView, products) {
         const id = product.id;
         const name = product.name;
         const price = product.price;
-        const option = "S"; // TODO: replace with selected size
+        const color = product.color[0];
+        let sizeContainer = document.querySelector("#size-options");
+        let selectedSize = sizeContainer?.dataset.selectedSize || product.sizes[0];
+        let selectedColor = product.color?.[0] || { name: "N/A", hex: "#000000" };
 
-        let existingItem = cartItems.find(item => item.id == id && item.option == option);
+        let existingItem = cartItems.find(item => 
+            item.id == id && item.option == option && item.color?.name === color.name
+        );
 
         if (existingItem) {
             existingItem.quantity++;
         } else {
-            cartItems.push(new Cart(id, name, option, price, 1));
+            cartItems.push(new Cart(id, name, selectedSize, price, 1, selectedColor));
         }
 
         updateCartIconNum();
