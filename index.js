@@ -51,6 +51,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         });
+        document.getElementById("logo").addEventListener("click", () => {
+            changePage("home", products);
+        });
     }
 
     //event delegation for "More Details" & "Add to Cart(not done yet" 
@@ -268,6 +271,16 @@ function initBrowse(products) {
 
             if (viewId == "women" || viewId == "men"){
                 loadGenderProducts(viewId, products);
+
+                const heroDiv = document.getElementById(`${viewId}-hero-image`);
+                heroDiv.innerHTML = "";
+
+                const img = document.createElement("img");
+                img.src = `https://placehold.co/1200x400/png?text=${viewId}+Place+holder`;
+                img.alt = viewId;
+                img.className = "w-full h-auto object-cover";
+
+                heroDiv.appendChild(img);
             }
             views.forEach(view => {
                 document.getElementById(view).classList.add("hidden");
